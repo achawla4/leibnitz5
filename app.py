@@ -899,6 +899,16 @@ def download_output(output_id):
     # Can be extended to zip multiple outputs
     return jsonify({"message": "Download feature - ready for extension"})
 
+@app.errorhandler(Exception)
+def handle_exception(e):
+    import traceback
+    tb = traceback.format_exc()
+    return jsonify({
+        "success": False,
+        "error": str(e),
+        "traceback": tb
+    }), 500
+
 if __name__ == '__main__':
     print("[Leibnitz Signal Processing Backend Started]")
     print("Demo Login: username: demo | password: demo123")
