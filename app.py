@@ -802,7 +802,7 @@ def generate_suite_plot(original_filename, operation, original_signal, result_da
 
     elif operation == 'sft':
         fig.clf()
-        fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(14, 10), facecolor='#0a0e27')
+        fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(10, 8), facecolor='#0a0e27')
         ax1.set_facecolor('#0a0e27')
         ax2.set_facecolor('#0a0e27')
         ax3.set_facecolor('#0a0e27')
@@ -884,7 +884,7 @@ def generate_suite_plot(original_filename, operation, original_signal, result_da
         ax.grid(True, alpha=0.3)
 
     fig.tight_layout()
-    fig.savefig(plot_path, dpi=200, facecolor='#0a0e27')
+    fig.savefig(plot_path, dpi=100, facecolor='#0a0e27')
     plt.close(fig)
     
     return plot_filename
