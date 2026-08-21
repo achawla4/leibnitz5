@@ -8,6 +8,8 @@ Created on Thu Jun 11 20:21:02 2026
 from flask import Flask, render_template, request, redirect, url_for, jsonify, send_from_directory, session, flash
 import os
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from scipy import signal
 import uuid
