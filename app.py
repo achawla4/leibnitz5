@@ -21,6 +21,7 @@ from SignalProcessingSuite.blocks import get_block, list_blocks, timed_run
 app = Flask(__name__)
 app.secret_key = 'leibnitz-super-secret-key-2026'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30)
+app.url_map.strict_slashes = False
 
 # Configuration
 UPLOAD_FOLDER = 'uploads'
