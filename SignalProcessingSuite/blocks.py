@@ -681,9 +681,19 @@ class SemiclassicalFTBlock(ProcessingBlock):
         collapsed_history = []
         psi_sc_history = []
 
+        # Precompute the propagator matrix U = M_plus^-1 * M_minus to optimize performance
+        # and avoid potential multi-threaded LAPACK solve segfaults on virtualized CPUs.
+        try:
+            U = np.linalg.inv(M_plus).dot(M_minus)
+        except Exception:
+            U = None
+
         for step in range(steps):
-            # 1. Evolve under Schrödinger equation using Crank-Nicolson solve
-            psi = np.linalg.solve(M_plus, M_minus.dot(psi))
+            # 1. Evolve under Schrödinger equation
+            if U is not None:
+                psi = U.dot(psi)
+            else:
+                psi = np.linalg.solve(M_plus, M_minus.dot(psi))
             psi_norm = np.linalg.norm(psi)
             if psi_norm > 0:
                 psi = psi / psi_norm
