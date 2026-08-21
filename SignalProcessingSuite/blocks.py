@@ -567,6 +567,269 @@ Zero Cross:     {features['zero_crossing_rate']:>10.4f}
 
         return image
 
+
+def resample_signal(sig: np.ndarray, target_len: int) -> np.ndarray:
+    if len(sig) == target_len:
+        return sig
+    try:
+        from scipy.signal import resample
+        return resample(sig, target_len)
+    except ImportError:
+        # fallback simple linear interpolation
+        xp = np.linspace(0, 1, len(sig))
+        x = np.linspace(0, 1, target_len)
+        return np.interp(x, xp, sig)
+
+
+class SemiclassicalFTBlock(ProcessingBlock):
+    id = "sft"
+    name = "Semiclassical Fourier Transform"
+    category = "frequency"
+    input_schema = {"signal": "1d-array", "sample_rate": "positive-float"}
+    output_schema = {
+        "frequencies": "array",
+        "final_sft_proj_probability": "array",
+        "final_sft_mod_probability": "array",
+        "final_qft_probability": "array",
+        "final_dft_probability": "array",
+        "mean_fidelity_proj": "float",
+        "final_fidelity_proj": "float",
+        "mean_fidelity_mod": "float",
+        "final_fidelity_mod": "float",
+        "steps": "int",
+        "alpha": "float",
+        "fidelity_proj_over_time": "array",
+        "fidelity_mod_over_time": "array",
+    }
+    default_params = {
+        "sft_alpha": 0.5,
+        "sft_steps": 50,
+        "sft_dt": 0.1,
+        "sft_potential": 0.001,
+    }
+
+    def validate(self, params: dict[str, Any], sample_rate: float) -> dict[str, Any]:
+        merged = super().validate(params, sample_rate)
+        try:
+            merged["sft_alpha"] = min(1.0, max(0.0, float(merged.get("sft_alpha", 0.5))))
+        except (TypeError, ValueError):
+            merged["sft_alpha"] = 0.5
+        try:
+            merged["sft_steps"] = min(500, max(5, int(merged.get("sft_steps", 50))))
+        except (TypeError, ValueError):
+            merged["sft_steps"] = 50
+        try:
+            merged["sft_dt"] = min(10.0, max(0.001, float(merged.get("sft_dt", 0.1))))
+        except (TypeError, ValueError):
+            merged["sft_dt"] = 0.1
+        try:
+            merged["sft_potential"] = min(1.0, max(0.0, float(merged.get("sft_potential", 0.001))))
+        except (TypeError, ValueError):
+            merged["sft_potential"] = 0.001
+        return merged
+
+    def run(self, signal: Iterable[float], sample_rate: float, params: dict[str, Any]) -> BlockRunResult:
+        params = self.validate(params, sample_rate)
+        alpha = params["sft_alpha"]
+        steps = params["sft_steps"]
+        dt = params["sft_dt"]
+        kappa = params["sft_potential"]
+
+        sig_in = np.asarray(signal, dtype=float)
+        N = 256
+        sig = resample_signal(sig_in, N)
+
+        # Normalize to form initial wavefunction psi_0
+        norm = np.linalg.norm(sig)
+        if norm == 0:
+            psi = np.ones(N, dtype=complex) / np.sqrt(N)
+        else:
+            psi = sig.astype(complex) / norm
+
+        # Embed the user data in complex space as psi_data
+        psi_data = psi.copy()
+
+        # Construct Hamiltonian matrix H = K + V
+        K = np.zeros((N, N), dtype=complex)
+        for i in range(N):
+            K[i, i] = 1.0
+            K[i, (i + 1) % N] = -0.5
+            K[i, (i - 1) % N] = -0.5
+
+        # V (harmonic potential centered at N/2)
+        x_indices = np.arange(N)
+        V_diag = 0.5 * kappa * (x_indices - N / 2.0) ** 2
+        V = np.diag(V_diag).astype(complex)
+
+        H = K + V
+
+        # Crank-Nicolson matrices: (I + i*dt/2 * H) * psi_new = (I - i*dt/2 * H) * psi_old
+        I = np.identity(N, dtype=complex)
+        M_plus = I + 1j * (dt / 2.0) * H
+        M_minus = I - 1j * (dt / 2.0) * H
+
+        # Set up deterministic random generation based on input hash
+        import hashlib
+        h = hashlib.sha256(sig_in.tobytes()).hexdigest()
+        seed = int(h, 16) % (2**32)
+        rng = np.random.default_rng(seed)
+
+        # Trace history for plotting
+        psi_history = [psi.copy()]
+        fidelity_proj_history = []
+        fidelity_mod_history = []
+        collapsed_history = []
+        psi_sc_history = []
+
+        for step in range(steps):
+            # 1. Evolve under Schrödinger equation using Crank-Nicolson solve
+            psi = np.linalg.solve(M_plus, M_minus.dot(psi))
+            psi_norm = np.linalg.norm(psi)
+            if psi_norm > 0:
+                psi = psi / psi_norm
+            psi_history.append(psi.copy())
+
+            # 2. Form probability density and sample collapse position
+            P = np.abs(psi) ** 2
+            P = P / np.sum(P)  # Normalize to handle numerical precision drift
+            collapsed_idx = rng.choice(N, p=P)
+            collapsed_history.append(collapsed_idx)
+
+            # 3. Create Dirac delta collapsed state
+            psi_col = np.zeros(N, dtype=complex)
+            psi_col[collapsed_idx] = 1.0
+
+            # 4. Semiclassical wavefunction interpolation
+            # Interpolate alpha_step from 0 to alpha over the steps to simulate continuous collapse
+            alpha_step = (step / (steps - 1)) * alpha if steps > 1 else alpha
+            psi_sc = (1.0 - alpha_step) * psi + alpha_step * psi_col
+            psi_sc_norm = np.linalg.norm(psi_sc)
+            if psi_sc_norm > 0:
+                psi_sc = psi_sc / psi_sc_norm
+            psi_sc_history.append(psi_sc.copy())
+
+            # 5. Semiclassical Operators acting on psi_data
+            # Projective Operator: P_sc = |psi_sc><psi_sc|
+            # psi_proj = P_sc * psi_data = <psi_sc, psi_data> * psi_sc
+            proj_coef = np.vdot(psi_sc, psi_data)
+            psi_proj = proj_coef * psi_sc
+            psi_proj_norm = np.linalg.norm(psi_proj)
+            if psi_proj_norm > 0:
+                psi_proj = psi_proj / psi_proj_norm
+
+            # Modulative Operator: M_sc = diag(psi_sc)
+            # psi_mod = psi_sc * psi_data (element-wise)
+            psi_mod = psi_sc * psi_data
+            psi_mod_norm = np.linalg.norm(psi_mod)
+            if psi_mod_norm > 0:
+                psi_mod = psi_mod / psi_mod_norm
+
+            # 6. Fourier Transforms
+            phi = np.fft.fft(psi) / np.sqrt(N)
+            P_FT = np.abs(phi) ** 2
+
+            phi_proj = np.fft.fft(psi_proj) / np.sqrt(N)
+            P_proj_FT = np.abs(phi_proj) ** 2
+
+            phi_mod = np.fft.fft(psi_mod) / np.sqrt(N)
+            P_mod_FT = np.abs(phi_mod) ** 2
+
+            # Calculate spectral fidelities
+            fid_proj = float(np.sum(np.sqrt(P_FT * P_proj_FT)) ** 2)
+            fid_mod = float(np.sum(np.sqrt(P_FT * P_mod_FT)) ** 2)
+            fidelity_proj_history.append(fid_proj)
+            fidelity_mod_history.append(fid_mod)
+
+        # Final state calculations
+        final_psi = psi_history[-1]
+        final_psi_sc = psi_sc_history[-1]
+
+        final_phi = np.fft.fft(final_psi) / np.sqrt(N)
+        final_P_FT = np.abs(final_phi) ** 2
+
+        # Final operators acting on user data
+        final_proj_coef = np.vdot(final_psi_sc, psi_data)
+        final_psi_proj = final_proj_coef * final_psi_sc
+        final_psi_proj_norm = np.linalg.norm(final_psi_proj)
+        if final_psi_proj_norm > 0:
+            final_psi_proj = final_psi_proj / final_psi_proj_norm
+        final_phi_proj = np.fft.fft(final_psi_proj) / np.sqrt(N)
+        final_P_proj_FT = np.abs(final_phi_proj) ** 2
+
+        final_psi_mod = final_psi_sc * psi_data
+        final_psi_mod_norm = np.linalg.norm(final_psi_mod)
+        if final_psi_mod_norm > 0:
+            final_psi_mod = final_psi_mod / final_psi_mod_norm
+        final_phi_mod = np.fft.fft(final_psi_mod) / np.sqrt(N)
+        final_P_mod_FT = np.abs(final_phi_mod) ** 2
+
+        # Final classical collapsed state
+        final_collapsed_idx = collapsed_history[-1]
+        final_psi_col = np.zeros(N, dtype=complex)
+        final_psi_col[final_collapsed_idx] = 1.0
+        final_phi_col = np.fft.fft(final_psi_col) / np.sqrt(N)
+        final_P_col_FT = np.abs(final_phi_col) ** 2
+
+        # Construct Semiclassical Projection Operator Matrix (Outer Product)
+        # P_op = |psi_sc><psi_sc|
+        P_op = np.outer(final_psi_sc, np.conj(final_psi_sc))
+
+        # Shift frequencies and probabilities for nice plotting
+        freqs = np.fft.fftfreq(N, d=1.0 / sample_rate)
+        freqs_shifted = np.fft.fftshift(freqs)
+        P_FT_shifted = np.fft.fftshift(final_P_FT)
+        P_proj_FT_shifted = np.fft.fftshift(final_P_proj_FT)
+        P_mod_FT_shifted = np.fft.fftshift(final_P_mod_FT)
+        P_col_FT_shifted = np.fft.fftshift(final_P_col_FT)
+
+        result_data = {
+            "frequencies": freqs_shifted.tolist(),
+            "final_sft_proj_probability": P_proj_FT_shifted.tolist(),
+            "final_sft_mod_probability": P_mod_FT_shifted.tolist(),
+            "final_qft_probability": P_FT_shifted.tolist(),
+            "final_dft_probability": P_col_FT_shifted.tolist(),
+            "mean_fidelity_proj": round(float(np.mean(fidelity_proj_history)), 5),
+            "final_fidelity_proj": round(fidelity_proj_history[-1], 5),
+            "mean_fidelity_mod": round(float(np.mean(fidelity_mod_history)), 5),
+            "final_fidelity_mod": round(fidelity_mod_history[-1], 5),
+            "steps": steps,
+            "alpha": alpha,
+            "fidelity_proj_over_time": [round(f, 5) for f in fidelity_proj_history],
+            "fidelity_mod_over_time": [round(f, 5) for f in fidelity_mod_history],
+        }
+
+        # Keep plot data in original complex/arrays for generator
+        plot_data = {
+            "N": N,
+            "psi_history": [p.tolist() if isinstance(p, np.ndarray) else p for p in psi_history],
+            "psi_sc_history": [p.tolist() if isinstance(p, np.ndarray) else p for p in psi_sc_history],
+            "collapsed_history": collapsed_history,
+            "fidelity_proj_history": fidelity_proj_history,
+            "fidelity_mod_history": fidelity_mod_history,
+            "freqs": freqs_shifted,
+            "final_P_FT": P_FT_shifted,
+            "final_P_proj_FT": P_proj_FT_shifted,
+            "final_P_mod_FT": P_mod_FT_shifted,
+            "final_P_col_FT": P_col_FT_shifted,
+            "steps": steps,
+            "alpha": alpha,
+            "dt": dt,
+            "operator_matrix_magnitude": np.abs(P_op).tolist(),
+        }
+
+        return BlockRunResult(
+            result=result_data,
+            output_signal=final_psi_proj.real,
+            plot_data=plot_data,
+            warnings=[],
+            metadata={
+                "N": N,
+                "final_fidelity_proj": fidelity_proj_history[-1],
+                "final_fidelity_mod": fidelity_mod_history[-1],
+            }
+        )
+
+
 BLOCK_REGISTRY: dict[str, ProcessingBlock] = {
     block.id: block
     for block in (
@@ -576,6 +839,7 @@ BLOCK_REGISTRY: dict[str, ProcessingBlock] = {
         ifftBlock(),
         DavinciTronBlock(),
         TimeFeatureBlock(),
+        SemiclassicalFTBlock(),
     )
 }
 

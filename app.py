@@ -797,15 +797,92 @@ def generate_suite_plot(original_filename, operation, original_signal, result_da
         plot_wavelet_coefficients(coeffs, ax=ax1)
         ax1.grid(True, alpha=0.3)
 
+    elif operation == 'sft':
+        fig.clf()
+        fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(14, 10), facecolor='#0a0e27')
+        ax1.set_facecolor('#0a0e27')
+        ax2.set_facecolor('#0a0e27')
+        ax3.set_facecolor('#0a0e27')
+        ax4.set_facecolor('#0a0e27')
+
+        N = result_data['N']
+        psi_history = result_data['psi_history']
+        collapsed_history = result_data['collapsed_history']
+        fidelity_proj_history = result_data['fidelity_proj_history']
+        fidelity_mod_history = result_data['fidelity_mod_history']
+        freqs = np.array(result_data['freqs'])
+        final_P_FT = np.array(result_data['final_P_FT'])
+        final_P_proj_FT = np.array(result_data['final_P_proj_FT'])
+        final_P_mod_FT = np.array(result_data['final_P_mod_FT'])
+        final_P_col_FT = np.array(result_data['final_P_col_FT'])
+        steps = result_data['steps']
+        alpha = result_data['alpha']
+        dt = result_data['dt']
+        operator_matrix_mag = np.array(result_data['operator_matrix_magnitude'])
+
+        # Plot 1: Wavefunction Position Probability Evolution over time
+        steps_to_plot = [0, steps // 4, 2 * steps // 4, 3 * steps // 4, steps]
+        colors = ['#ff3344', '#ff8800', '#ffd700', '#00d4ff', '#00ff88']
+        color_idx = 0
+        for step_idx in steps_to_plot:
+            if step_idx < len(psi_history):
+                psi_t = np.array(psi_history[step_idx])
+                P_t = np.abs(psi_t) ** 2
+                t_val = step_idx * dt
+                col = colors[color_idx % len(colors)]
+                ax1.plot(P_t, label=f"t = {t_val:.2f}", color=col, alpha=0.8)
+                color_idx += 1
+        ax1.set_title("Schrödinger Position Wavefunction Evolution", color='#ffffff', fontsize=11, pad=8)
+        ax1.set_xlabel("Position Coordinate (x)", color='#b0b8cc', fontsize=9)
+        ax1.set_ylabel("Probability Density", color='#b0b8cc', fontsize=9)
+        ax1.legend(loc="upper right", facecolor='#0f1535', edgecolor='#1a2847', fontsize=8)
+        ax1.grid(True, alpha=0.1)
+        ax1.tick_params(colors='#b0b8cc', labelsize=8)
+
+        # Plot 2: 2D Semiclassical Operator Matrix Heatmap
+        im = ax2.imshow(operator_matrix_mag, cmap='inferno', extent=[0, N, 0, N], origin='lower')
+        cbar = fig.colorbar(im, ax=ax2, shrink=0.8)
+        cbar.ax.yaxis.set_tick_params(color='#b0b8cc', labelsize=8)
+        cbar.ax.set_ylabel('Operator Matrix Magnitude |P_sc[j,k]|', color='#b0b8cc', rotation=270, labelpad=15, fontsize=8)
+        ax2.set_title("Semiclassical Operator Density Matrix $|P_{sc}|$", color='#ffffff', fontsize=11, pad=8)
+        ax2.set_xlabel("State Index (k)", color='#b0b8cc', fontsize=9)
+        ax2.set_ylabel("State Index (j)", color='#b0b8cc', fontsize=9)
+        ax2.tick_params(colors='#b0b8cc', labelsize=8)
+
+        # Plot 3: Frequency-domain Fourier probabilities comparison
+        ax3.plot(freqs, final_P_FT, label="Quantum FT (QFT)", color='#00ff88', linewidth=2)
+        ax3.fill_between(freqs, final_P_FT, alpha=0.1, color='#00ff88')
+        ax3.plot(freqs, final_P_proj_FT, label=f"Proj SFT (alpha={alpha})", color='#ffd700', linewidth=1.5)
+        ax3.plot(freqs, final_P_mod_FT, label=f"Mod SFT", color='#00d4ff', linewidth=1.2, linestyle=':')
+        ax3.plot(freqs, final_P_col_FT, label="Classical Collapsed DFT", color='#ff3344', linestyle='--', alpha=0.7, linewidth=1.2)
+        ax3.set_title("Frequency-Domain Fourier Probabilities", color='#ffffff', fontsize=11, pad=8)
+        ax3.set_xlabel("Frequency (Hz)", color='#b0b8cc', fontsize=9)
+        ax3.set_ylabel("Probability Density", color='#b0b8cc', fontsize=9)
+        ax3.legend(loc="upper right", facecolor='#0f1535', edgecolor='#1a2847', fontsize=8)
+        ax3.grid(True, alpha=0.1)
+        ax3.tick_params(colors='#b0b8cc', labelsize=8)
+
+        # Plot 4: Spectral Fidelities over Time Steps
+        time_axis = np.arange(1, len(fidelity_proj_history) + 1) * dt
+        ax4.plot(time_axis, fidelity_proj_history, color='#ffd700', marker='.', linewidth=1.5, label="Projective SFT Fidelity")
+        ax4.plot(time_axis, fidelity_mod_history, color='#00d4ff', marker='x', linewidth=1.2, label="Modulative SFT Fidelity", alpha=0.8)
+        ax4.set_title("Spectral Fidelity Over Time Evolution", color='#ffffff', fontsize=11, pad=8)
+        ax4.set_xlabel("Time (s)", color='#b0b8cc', fontsize=9)
+        ax4.set_ylabel("Spectral Fidelity", color='#b0b8cc', fontsize=9)
+        ax4.set_ylim(-0.05, 1.05)
+        ax4.grid(True, alpha=0.1)
+        ax4.legend(loc="lower right", facecolor='#0f1535', edgecolor='#1a2847', fontsize=8)
+        ax4.tick_params(colors='#b0b8cc', labelsize=8)
+
     else:
         times = np.arange(min(len(original_signal), 1000)) / sample_rate
         ax.plot(times, original_signal[:1000], color='#ffd700')
         ax.set_title('Signal Visualization')
         ax.grid(True, alpha=0.3)
 
-    plt.tight_layout()
-    plt.savefig(plot_path, dpi=200, facecolor='#0a0e27')
-    plt.close('all')
+    fig.tight_layout()
+    fig.savefig(plot_path, dpi=200, facecolor='#0a0e27')
+    plt.close(fig)
     
     return plot_filename
 

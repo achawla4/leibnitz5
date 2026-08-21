@@ -6,5 +6,10 @@
         "password": "add123",
         "is_paid": false,
         "payment_utr": null
+    },
+    "demo2": {
+        "password": "ramtirth",
+        "is_paid": false,
+        "payment_utr": null
     }
 }
