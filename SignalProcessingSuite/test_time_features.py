@@ -5,10 +5,10 @@ import pytest
 
 # These imports assume time_features.py is in the same directory or installed
 try:
-    from time_features import TimeFeatureBlock
+    from blocks import TimeFeatureBlock
 except ImportError:
     # For testing in context of full module
-    from SignalProcessingSuite.time_features import TimeFeatureBlock
+    from SignalProcessingSuite.blocks import TimeFeatureBlock
 
 
 class TestTimeFeatureBlock:
@@ -25,7 +25,7 @@ class TestTimeFeatureBlock:
         assert block.id == "time_features"
         assert block.name == "Time-Domain Features"
         assert block.category == "feature-extraction"
-        assert len(block.output_schema) == 12
+        assert len(block.output_schema) == 14
 
     def test_constant_signal(self, block):
         """Test on constant signal: should have zero variance."""
@@ -227,7 +227,7 @@ class TestTimeFeatureBlockIntegration:
 
         for i, sig in enumerate(signals):
             result = block.run(sig, 1000, {})
-            assert len(result.result) == 12  # All features present
+            assert len(result.result) == 14  # All features present
             assert isinstance(result.result["mean"], float)
 
 

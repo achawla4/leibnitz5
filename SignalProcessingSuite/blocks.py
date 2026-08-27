@@ -606,6 +606,9 @@ class SemiclassicalFTBlock(ProcessingBlock):
         "sft_steps": 50,
         "sft_dt": 0.1,
         "sft_potential": 0.001,
+        "sft_interaction": 0.1,
+        "sft_particle_type": "distinguishable",
+        "sft_grid_size": 32,
     }
 
     def validate(self, params: dict[str, Any], sample_rate: float) -> dict[str, Any]:
@@ -626,6 +629,18 @@ class SemiclassicalFTBlock(ProcessingBlock):
             merged["sft_potential"] = min(1.0, max(0.0, float(merged.get("sft_potential", 0.001))))
         except (TypeError, ValueError):
             merged["sft_potential"] = 0.001
+        try:
+            merged["sft_interaction"] = min(10.0, max(-10.0, float(merged.get("sft_interaction", 0.1))))
+        except (TypeError, ValueError):
+            merged["sft_interaction"] = 0.1
+        pt = merged.get("sft_particle_type", "distinguishable")
+        if pt not in ("distinguishable", "bosons", "fermions"):
+            pt = "distinguishable"
+        merged["sft_particle_type"] = pt
+        try:
+            merged["sft_grid_size"] = min(64, max(8, int(merged.get("sft_grid_size", 32))))
+        except (TypeError, ValueError):
+            merged["sft_grid_size"] = 32
         return merged
 
     def run(self, signal: Iterable[float], sample_rate: float, params: dict[str, Any]) -> BlockRunResult:
@@ -634,39 +649,75 @@ class SemiclassicalFTBlock(ProcessingBlock):
         steps = params["sft_steps"]
         dt = params["sft_dt"]
         kappa = params["sft_potential"]
+        g = params["sft_interaction"]
+        pt = params["sft_particle_type"]
+        M = params["sft_grid_size"]
 
         sig_in = np.asarray(signal, dtype=float)
-        N = 256
-        sig = resample_signal(sig_in, N)
-
-        # Normalize to form initial wavefunction psi_0
-        norm = np.linalg.norm(sig)
-        if norm == 0:
-            psi = np.ones(N, dtype=complex) / np.sqrt(N)
+        # Resample signal to 1D grid size M
+        sig = resample_signal(sig_in, M)
+        norm_sig = np.linalg.norm(sig)
+        if norm_sig == 0:
+            psi_sig = np.ones(M, dtype=complex) / np.sqrt(M)
         else:
-            psi = sig.astype(complex) / norm
+            psi_sig = sig.astype(complex) / norm_sig
 
-        # Embed the user data in complex space as psi_data
-        psi_data = psi.copy()
+        # Construct reference state (Gaussian wave packet) for the second particle
+        x_ref = np.arange(M)
+        sigma = M / 8.0
+        psi_ref = np.exp(-0.5 * ((x_ref - M / 2.0) / sigma) ** 2)
+        psi_ref = psi_ref / np.linalg.norm(psi_ref)
 
-        # Construct Hamiltonian matrix H = K + V
-        K = np.zeros((N, N), dtype=complex)
-        for i in range(N):
-            K[i, i] = 1.0
-            K[i, (i + 1) % N] = -0.5
-            K[i, (i - 1) % N] = -0.5
+        # Build initial joint wavefunction Psi_0(x1, x2)
+        if pt == "bosons":
+            Psi = np.outer(psi_sig, psi_ref) + np.outer(psi_ref, psi_sig)
+        elif pt == "fermions":
+            Psi = np.outer(psi_sig, psi_ref) - np.outer(psi_ref, psi_sig)
+        else:
+            Psi = np.outer(psi_sig, psi_ref)
 
-        # V (harmonic potential centered at N/2)
-        x_indices = np.arange(N)
-        V_diag = 0.5 * kappa * (x_indices - N / 2.0) ** 2
+        Psi_norm = np.linalg.norm(Psi)
+        if Psi_norm == 0:
+            # Fallback if Fermi symmetry cancels out initial state
+            psi_ref_perturbed = np.exp(-0.5 * ((x_ref - M / 2.2) / sigma) ** 2)
+            psi_ref_perturbed /= np.linalg.norm(psi_ref_perturbed)
+            Psi = np.outer(psi_sig, psi_ref_perturbed) - np.outer(psi_ref_perturbed, psi_sig)
+            Psi_norm = np.linalg.norm(Psi)
+            if Psi_norm == 0:
+                Psi = np.zeros((M, M), dtype=complex)
+                Psi[0, 1] = 1.0 / np.sqrt(2)
+                Psi[1, 0] = -1.0 / np.sqrt(2)
+            else:
+                Psi = Psi / Psi_norm
+        else:
+            Psi = Psi / Psi_norm
+
+        Psi_data = Psi.copy()
+
+        # Construct Kronecker-summed 2-body Kinetic energy operator K
+        K_1D = np.zeros((M, M), dtype=complex)
+        for i in range(M):
+            K_1D[i, i] = 1.0
+            K_1D[i, (i + 1) % M] = -0.5
+            K_1D[i, (i - 1) % M] = -0.5
+        K = np.kron(K_1D, np.identity(M, dtype=complex)) + np.kron(np.identity(M, dtype=complex), K_1D)
+
+        # 2D Grid coordinates for potential V
+        x1 = np.arange(M)
+        x2 = np.arange(M)
+        X1, X2 = np.meshgrid(x1, x2, indexing='ij')
+
+        V_ext = 0.5 * kappa * ((X1 - M / 2.0) ** 2 + (X2 - M / 2.0) ** 2)
+        V_int = 0.5 * g * (X1 - X2) ** 2
+        V_diag = V_ext.flatten() + V_int.flatten()
         V = np.diag(V_diag).astype(complex)
 
         H = K + V
 
-        # Crank-Nicolson matrices: (I + i*dt/2 * H) * psi_new = (I - i*dt/2 * H) * psi_old
-        I = np.identity(N, dtype=complex)
-        M_plus = I + 1j * (dt / 2.0) * H
-        M_minus = I - 1j * (dt / 2.0) * H
+        # Crank-Nicolson matrices (I + i*dt/2 * H) * Psi_new = (I - i*dt/2 * H) * Psi_old
+        I_joint = np.identity(M * M, dtype=complex)
+        M_plus = I_joint + 1j * (dt / 2.0) * H
+        M_minus = I_joint - 1j * (dt / 2.0) * H
 
         # Set up deterministic random generation based on input hash
         import hashlib
@@ -674,15 +725,12 @@ class SemiclassicalFTBlock(ProcessingBlock):
         seed = int(h, 16) % (2**32)
         rng = np.random.default_rng(seed)
 
-        # Trace history for plotting
-        psi_history = [psi.copy()]
+        Psi_history = [Psi.copy()]
         fidelity_proj_history = []
         fidelity_mod_history = []
-        collapsed_history = []
-        psi_sc_history = []
+        collapsed_history_2d = []
+        Psi_sc_history = []
 
-        # Precompute the propagator matrix U = M_plus^-1 * M_minus to optimize performance
-        # and avoid potential multi-threaded LAPACK solve segfaults on virtualized CPUs.
         try:
             U = np.linalg.inv(M_plus).dot(M_minus)
         except Exception:
@@ -690,107 +738,120 @@ class SemiclassicalFTBlock(ProcessingBlock):
 
         for step in range(steps):
             # 1. Evolve under Schrödinger equation
+            Psi_flat = Psi.flatten()
             if U is not None:
-                psi = U.dot(psi)
+                Psi_flat = U.dot(Psi_flat)
             else:
-                psi = np.linalg.solve(M_plus, M_minus.dot(psi))
-            psi_norm = np.linalg.norm(psi)
-            if psi_norm > 0:
-                psi = psi / psi_norm
-            psi_history.append(psi.copy())
+                Psi_flat = np.linalg.solve(M_plus, M_minus.dot(Psi_flat))
+            Psi = Psi_flat.reshape((M, M))
+            Psi_norm = np.linalg.norm(Psi)
+            if Psi_norm > 0:
+                Psi = Psi / Psi_norm
+            Psi_history.append(Psi.copy())
 
-            # 2. Form probability density and sample collapse position
-            P = np.abs(psi) ** 2
-            P = P / np.sum(P)  # Normalize to handle numerical precision drift
-            collapsed_idx = rng.choice(N, p=P)
-            collapsed_history.append(collapsed_idx)
+            # 2. Form joint probability density and sample collapse position
+            P_2D = np.abs(Psi) ** 2
+            P_sum = np.sum(P_2D)
+            if P_sum > 0:
+                P_2D = P_2D / P_sum
+            flat_idx = rng.choice(M * M, p=P_2D.flatten())
+            c_idx1 = flat_idx // M
+            c_idx2 = flat_idx % M
+            collapsed_history_2d.append((c_idx1, c_idx2))
 
             # 3. Create Dirac delta collapsed state
-            psi_col = np.zeros(N, dtype=complex)
-            psi_col[collapsed_idx] = 1.0
+            Psi_col = np.zeros((M, M), dtype=complex)
+            Psi_col[c_idx1, c_idx2] = 1.0
 
             # 4. Semiclassical wavefunction interpolation
-            # Interpolate alpha_step from 0 to alpha over the steps to simulate continuous collapse
             alpha_step = (step / (steps - 1)) * alpha if steps > 1 else alpha
-            psi_sc = (1.0 - alpha_step) * psi + alpha_step * psi_col
-            psi_sc_norm = np.linalg.norm(psi_sc)
-            if psi_sc_norm > 0:
-                psi_sc = psi_sc / psi_sc_norm
-            psi_sc_history.append(psi_sc.copy())
+            Psi_sc = (1.0 - alpha_step) * Psi + alpha_step * Psi_col
+            Psi_sc_norm = np.linalg.norm(Psi_sc)
+            if Psi_sc_norm > 0:
+                Psi_sc = Psi_sc / Psi_sc_norm
+            Psi_sc_history.append(Psi_sc.copy())
 
-            # 5. Semiclassical Operators acting on psi_data
-            # Projective Operator: P_sc = |psi_sc><psi_sc|
-            # psi_proj = P_sc * psi_data = <psi_sc, psi_data> * psi_sc
-            proj_coef = np.vdot(psi_sc, psi_data)
-            psi_proj = proj_coef * psi_sc
-            psi_proj_norm = np.linalg.norm(psi_proj)
-            if psi_proj_norm > 0:
-                psi_proj = psi_proj / psi_proj_norm
+            # 5. Semiclassical Operators acting on Psi_data
+            # Projective SFT: Psi_proj = <Psi_sc, Psi_data> * Psi_sc
+            proj_coef = np.vdot(Psi_sc, Psi_data)
+            Psi_proj = proj_coef * Psi_sc
+            Psi_proj_norm = np.linalg.norm(Psi_proj)
+            if Psi_proj_norm > 0:
+                Psi_proj = Psi_proj / Psi_proj_norm
 
-            # Modulative Operator: M_sc = diag(psi_sc)
-            # psi_mod = psi_sc * psi_data (element-wise)
-            psi_mod = psi_sc * psi_data
-            psi_mod_norm = np.linalg.norm(psi_mod)
-            if psi_mod_norm > 0:
-                psi_mod = psi_mod / psi_mod_norm
+            # Modulative SFT: Psi_mod = Psi_sc * Psi_data (element-wise)
+            Psi_mod = Psi_sc * Psi_data
+            Psi_mod_norm = np.linalg.norm(Psi_mod)
+            if Psi_mod_norm > 0:
+                Psi_mod = Psi_mod / Psi_mod_norm
 
-            # 6. Fourier Transforms
-            phi = np.fft.fft(psi) / np.sqrt(N)
-            P_FT = np.abs(phi) ** 2
+            # 6. Fourier Transforms (2D FFT)
+            Phi = np.fft.fft2(Psi) / M
+            P_FT = np.abs(Phi) ** 2
 
-            phi_proj = np.fft.fft(psi_proj) / np.sqrt(N)
-            P_proj_FT = np.abs(phi_proj) ** 2
+            Phi_proj = np.fft.fft2(Psi_proj) / M
+            P_proj_FT = np.abs(Phi_proj) ** 2
 
-            phi_mod = np.fft.fft(psi_mod) / np.sqrt(N)
-            P_mod_FT = np.abs(phi_mod) ** 2
+            Phi_mod = np.fft.fft2(Psi_mod) / M
+            P_mod_FT = np.abs(Phi_mod) ** 2
 
-            # Calculate spectral fidelities
+            # Calculate spectral fidelities in 2D
             fid_proj = float(np.sum(np.sqrt(P_FT * P_proj_FT)) ** 2)
             fid_mod = float(np.sum(np.sqrt(P_FT * P_mod_FT)) ** 2)
             fidelity_proj_history.append(fid_proj)
             fidelity_mod_history.append(fid_mod)
 
         # Final state calculations
-        final_psi = psi_history[-1]
-        final_psi_sc = psi_sc_history[-1]
+        final_Psi = Psi_history[-1]
+        final_Psi_sc = Psi_sc_history[-1]
 
-        final_phi = np.fft.fft(final_psi) / np.sqrt(N)
-        final_P_FT = np.abs(final_phi) ** 2
+        final_Phi = np.fft.fft2(final_Psi) / M
+        final_P_FT = np.abs(final_Phi) ** 2
 
         # Final operators acting on user data
-        final_proj_coef = np.vdot(final_psi_sc, psi_data)
-        final_psi_proj = final_proj_coef * final_psi_sc
-        final_psi_proj_norm = np.linalg.norm(final_psi_proj)
-        if final_psi_proj_norm > 0:
-            final_psi_proj = final_psi_proj / final_psi_proj_norm
-        final_phi_proj = np.fft.fft(final_psi_proj) / np.sqrt(N)
-        final_P_proj_FT = np.abs(final_phi_proj) ** 2
+        final_proj_coef = np.vdot(final_Psi_sc, Psi_data)
+        final_Psi_proj = final_proj_coef * final_Psi_sc
+        final_Psi_proj_norm = np.linalg.norm(final_Psi_proj)
+        if final_Psi_proj_norm > 0:
+            final_Psi_proj = final_Psi_proj / final_Psi_proj_norm
+        final_Phi_proj = np.fft.fft2(final_Psi_proj) / M
+        final_P_proj_FT = np.abs(final_Phi_proj) ** 2
 
-        final_psi_mod = final_psi_sc * psi_data
-        final_psi_mod_norm = np.linalg.norm(final_psi_mod)
-        if final_psi_mod_norm > 0:
-            final_psi_mod = final_psi_mod / final_psi_mod_norm
-        final_phi_mod = np.fft.fft(final_psi_mod) / np.sqrt(N)
-        final_P_mod_FT = np.abs(final_phi_mod) ** 2
+        final_Psi_mod = final_Psi_sc * Psi_data
+        final_Psi_mod_norm = np.linalg.norm(final_Psi_mod)
+        if final_Psi_mod_norm > 0:
+            final_Psi_mod = final_Psi_mod / final_Psi_mod_norm
+        final_Phi_mod = np.fft.fft2(final_Psi_mod) / M
+        final_P_mod_FT = np.abs(final_Phi_mod) ** 2
 
         # Final classical collapsed state
-        final_collapsed_idx = collapsed_history[-1]
-        final_psi_col = np.zeros(N, dtype=complex)
-        final_psi_col[final_collapsed_idx] = 1.0
-        final_phi_col = np.fft.fft(final_psi_col) / np.sqrt(N)
-        final_P_col_FT = np.abs(final_phi_col) ** 2
+        final_collapsed_idx = collapsed_history_2d[-1]
+        final_Psi_col = np.zeros((M, M), dtype=complex)
+        final_Psi_col[final_collapsed_idx[0], final_collapsed_idx[1]] = 1.0
+        final_Phi_col = np.fft.fft2(final_Psi_col) / M
+        final_P_col_FT = np.abs(final_Phi_col) ** 2
 
-        # Construct Semiclassical Projection Operator Matrix (Outer Product)
-        # P_op = |psi_sc><psi_sc|
-        P_op = np.outer(final_psi_sc, np.conj(final_psi_sc))
+        # Semiclassical Operator Matrix: Reduced Density Matrix for particle 1
+        P_op = np.zeros((M, M), dtype=complex)
+        for j in range(M):
+            for k in range(M):
+                P_op[j, k] = np.sum(final_Psi_sc[j, :] * np.conj(final_Psi_sc[k, :]))
 
-        # Shift frequencies and probabilities for nice plotting
-        freqs = np.fft.fftfreq(N, d=1.0 / sample_rate)
+        # Shift frequencies and probabilities for plotting/returning (marginalizing to particle 1)
+        freqs = np.fft.fftfreq(M, d=1.0 / sample_rate)
         freqs_shifted = np.fft.fftshift(freqs)
-        P_FT_shifted = np.fft.fftshift(final_P_FT)
-        P_proj_FT_shifted = np.fft.fftshift(final_P_proj_FT)
-        P_mod_FT_shifted = np.fft.fftshift(final_P_mod_FT)
-        P_col_FT_shifted = np.fft.fftshift(final_P_col_FT)
+
+        # Marginalize probability densities along particle 1 coordinate
+        P_FT_shifted = np.fft.fftshift(np.sum(final_P_FT, axis=1))
+        P_proj_FT_shifted = np.fft.fftshift(np.sum(final_P_proj_FT, axis=1))
+        P_mod_FT_shifted = np.fft.fftshift(np.sum(final_P_mod_FT, axis=1))
+        P_col_FT_shifted = np.fft.fftshift(np.sum(final_P_col_FT, axis=1))
+
+        # Normalize marginal probabilities
+        P_FT_shifted /= np.sum(P_FT_shifted) if np.sum(P_FT_shifted) > 0 else 1.0
+        P_proj_FT_shifted /= np.sum(P_proj_FT_shifted) if np.sum(P_proj_FT_shifted) > 0 else 1.0
+        P_mod_FT_shifted /= np.sum(P_mod_FT_shifted) if np.sum(P_mod_FT_shifted) > 0 else 1.0
+        P_col_FT_shifted /= np.sum(P_col_FT_shifted) if np.sum(P_col_FT_shifted) > 0 else 1.0
 
         result_data = {
             "frequencies": freqs_shifted.tolist(),
@@ -808,12 +869,24 @@ class SemiclassicalFTBlock(ProcessingBlock):
             "fidelity_mod_over_time": [round(f, 5) for f in fidelity_mod_history],
         }
 
-        # Keep plot data in original complex/arrays for generator
+        # Convert joint histories to particle 1 marginals for 1D plotting
+        psi_history_marginals = []
+        for Psi_step in Psi_history:
+            prob_marginal = np.sum(np.abs(Psi_step) ** 2, axis=1)
+            psi_history_marginals.append(np.sqrt(prob_marginal))
+
+        psi_sc_history_marginals = []
+        for Psi_sc_step in Psi_sc_history:
+            prob_sc_marginal = np.sum(np.abs(Psi_sc_step) ** 2, axis=1)
+            psi_sc_history_marginals.append(np.sqrt(prob_sc_marginal))
+
+        collapsed_history_out = [c[0] for c in collapsed_history_2d]
+
         plot_data = {
-            "N": N,
-            "psi_history": [p.tolist() if isinstance(p, np.ndarray) else p for p in psi_history],
-            "psi_sc_history": [p.tolist() if isinstance(p, np.ndarray) else p for p in psi_sc_history],
-            "collapsed_history": collapsed_history,
+            "N": M,
+            "psi_history": [p.tolist() for p in psi_history_marginals],
+            "psi_sc_history": [p.tolist() for p in psi_sc_history_marginals],
+            "collapsed_history": collapsed_history_out,
             "fidelity_proj_history": fidelity_proj_history,
             "fidelity_mod_history": fidelity_mod_history,
             "freqs": freqs_shifted,
@@ -827,13 +900,19 @@ class SemiclassicalFTBlock(ProcessingBlock):
             "operator_matrix_magnitude": np.abs(P_op).tolist(),
         }
 
+        # Extract 1D output signal (marginal of particle 1 projection wave)
+        output_sig = np.sum(final_Psi_proj, axis=1).real
+        sig_norm = np.linalg.norm(output_sig)
+        if sig_norm > 0:
+            output_sig = output_sig / sig_norm
+
         return BlockRunResult(
             result=result_data,
-            output_signal=final_psi_proj.real,
+            output_signal=output_sig,
             plot_data=plot_data,
             warnings=[],
             metadata={
-                "N": N,
+                "N": M,
                 "final_fidelity_proj": fidelity_proj_history[-1],
                 "final_fidelity_mod": fidelity_mod_history[-1],
             }

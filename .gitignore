@@ -1,3 +1,7 @@
 uploads/
 processed/
 postgreConnection.txt
+__pycache__/
+*.pyc
+.pytest_cache/
+users.json
