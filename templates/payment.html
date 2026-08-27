@@ -408,53 +408,24 @@
             </div>
         </div>
 
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('upi')">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
-                Pay via UPI
-            </button>
-            <button class="tab-btn" onclick="switchTab('paypal')">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
-                PayPal / Card
-            </button>
-        </div>
-
-        <!-- UPI CONTENT -->
-        <div id="upi-content" class="tab-content active">
-            <div class="form-group" style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px; text-align: center;">
-                <label style="margin-bottom: 4px; font-size: 0.75rem; letter-spacing: 1.5px;">Merchant UPI ID</label>
-                <span style="font-family: monospace; font-size: 1.25rem; color: var(--primary-glow); font-weight: 700;">9953039224@ybl</span>
+        <!-- Consolidated Central Checkout Flow -->
+        <div class="checkout-integration" style="margin-bottom: 25px;">
+            <div style="background: rgba(255,255,255,0.02); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px; text-align: center;">
+                <h3 style="color: var(--primary-glow); margin-bottom: 8px;">Step 1: Complete Payment</h3>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 15px;">Use our centralized checkout system to pay ₹1500 (approx. $19 USD) via UPI or Card.</p>
+                <a href="https://realinstitute.netlify.app/checkout.html?add-to-cart=Leibnitz%20Signal%20Processing%20Suite%20%28Leibnitz%205.0%29&price=1500" target="_blank" class="pay-btn" style="text-decoration: none; text-align: center; display: inline-block; width: auto; padding: 12px 30px;">Go to Central Checkout ↗</a>
             </div>
 
-            <div class="form-group" style="margin-bottom: 25px;">
-                <label for="utr-number" style="color: var(--text-main); font-weight: 600; text-align: left;">Enter UPI UTR / Transaction Reference (12 Digits)</label>
-                <input type="text" id="utr-number" placeholder="e.g. 629845701923" maxlength="12" pattern="\d{12}" style="letter-spacing: 2px; text-align: center; font-weight: 600;">
+            <div class="form-group" style="margin-bottom: 20px;">
+                <h3 style="color: var(--secondary-glow); margin-bottom: 12px; text-align: center;">Step 2: Enter Transaction UTR</h3>
+                <label for="utr-number" style="color: var(--text-main); font-weight: 600; text-align: center; display: block; margin-bottom: 8px;">UPI UTR / Transaction Reference (12 Digits)</label>
+                <input type="text" id="utr-number" placeholder="e.g. 629845701923" maxlength="12" pattern="\d{12}" style="letter-spacing: 2px; text-align: center; font-weight: 600; background: rgba(0, 0, 0, 0.3);">
                 <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 8px; text-align: center;">
-                    Please transfer exactly $19 to the UPI ID above, then enter the 12-digit transaction reference (UTR) here.
+                    Once paid, enter your 12-digit UTR number here to immediately verify and unlock your account.
                 </p>
             </div>
 
-            <button class="pay-btn" onclick="startUPIPayment()">Verify and Pay $19</button>
-        </div>
-
-        <!-- PAYPAL CONTENT -->
-        <div id="paypal-content" class="tab-content">
-            <div class="form-group" style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px; text-align: center;">
-                <label style="margin-bottom: 4px; font-size: 0.75rem; letter-spacing: 1.5px;">Merchant PayPal Email</label>
-                <span style="font-family: monospace; font-size: 1.25rem; color: var(--secondary-glow); font-weight: 700;">amanalliance@gmail.com</span>
-            </div>
-
-            <div class="paypal-container">
-                <button class="paypal-btn paypal-yellow" onclick="startPayment('PayPal')">
-                    <span class="paypal-logo">Pay<span>Pal</span></span>
-                </button>
-                <button class="paypal-btn paypal-blue" onclick="startPayment('Debit/Credit Card')">
-                    <span>Pay with Debit or Credit Card</span>
-                </button>
-                <button class="paypal-btn paypal-black" onclick="startPayment('PayPal Pay Later')">
-                    <span class="paypal-logo">Pay<span>Pal</span></span> &nbsp;Pay Later
-                </button>
-            </div>
+            <button class="pay-btn" onclick="startUPIPayment()">Verify & Unlock Account</button>
         </div>
 
         <div class="back-link">
