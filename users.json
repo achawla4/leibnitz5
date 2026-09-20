@@ -11,5 +11,15 @@
         "password": "ramtirth",
         "is_paid": false,
         "payment_utr": null
+    },
+    "sanskrit_user_4e6824": {
+        "password": "secure123",
+        "is_paid": true,
+        "payment_utr": "123456789012"
+    },
+    "sanskrit_user_89783c": {
+        "password": "secure123",
+        "is_paid": true,
+        "payment_utr": "123456789012"
     }
 }

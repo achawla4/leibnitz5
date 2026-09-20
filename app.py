@@ -977,7 +977,7 @@ def generate_suite_plot(original_filename, operation, original_signal, result_da
         # Plot 3: Frequency-domain Fourier probabilities comparison
         ax3.plot(freqs, final_P_FT, label="प्रमात्र-फूर्ये (QFT)", color='#00ff88', linewidth=2)
         ax3.fill_between(freqs, final_P_FT, alpha=0.1, color='#00ff88')
-        ax3.plot(freqs, final_P_proj_FT, label=f"प्रक्षेप-SFT (α={alpha})", color='#ffd700', linewidth=1.5)
+        ax3.plot(freqs, final_P_proj_FT, label=f"प्रक्षेप-SFT (alpha={alpha})", color='#ffd700', linewidth=1.5)
         ax3.plot(freqs, final_P_mod_FT, label="विकार-SFT", color='#00d4ff', linewidth=1.2, linestyle=':')
         ax3.plot(freqs, final_P_col_FT, label="शास्त्रीय-संपाती-DFT", color='#ff3344', linestyle='--', alpha=0.7, linewidth=1.2)
         ax3.set_title("आवृत्तिक्षेत्रीय-फूर्ये-सम्भाव्यताः", color='#ffffff', fontsize=11, pad=8)
