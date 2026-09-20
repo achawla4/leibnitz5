@@ -96,6 +96,133 @@
             color: var(--signal-green);
         }
 
+        /* Editions Dropdown */
+        .nav-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-toggle {
+            background: linear-gradient(135deg, rgba(255, 119, 0, 0.16) 0%, rgba(255, 215, 0, 0.12) 100%);
+            color: var(--accent-gold) !important;
+            font-weight: 700;
+            border: 1px solid rgba(255, 215, 0, 0.45);
+            padding: 0.42rem 1.1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            font-family: inherit;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .dropdown-toggle:hover,
+        .nav-dropdown:hover .dropdown-toggle,
+        .nav-dropdown.active .dropdown-toggle {
+            background: linear-gradient(135deg, rgba(255, 119, 0, 0.32) 0%, rgba(255, 215, 0, 0.22) 100%);
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 16px rgba(255, 215, 0, 0.35);
+            color: #ffffff !important;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            min-width: 320px;
+            background: rgba(15, 21, 53, 0.98);
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 215, 0, 0.35);
+            border-radius: 14px;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7), 0 0 25px rgba(255, 119, 0, 0.2);
+            padding: 0.6rem;
+            z-index: 250;
+        }
+
+        .nav-dropdown:hover .dropdown-menu,
+        .nav-dropdown:focus-within .dropdown-menu,
+        .dropdown-menu.show {
+            display: block;
+            animation: fadeInDrop 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes fadeInDrop {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dropdown-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            padding: 0.75rem 0.95rem;
+            border-radius: 10px;
+            color: var(--text-primary) !important;
+            text-decoration: none !important;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+            margin-bottom: 0.3rem;
+        }
+
+        .dropdown-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-left-color: var(--signal-green);
+        }
+
+        .dropdown-item.featured {
+            border-left-color: #ff7700;
+            background: rgba(255, 119, 0, 0.1);
+        }
+
+        .dropdown-item.featured:hover {
+            background: rgba(255, 119, 0, 0.22);
+            border-left-color: var(--accent-gold);
+            box-shadow: 0 4px 15px rgba(255, 119, 0, 0.2);
+        }
+
+        .dropdown-item-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .dropdown-item-desc {
+            font-size: 0.76rem;
+            color: var(--text-secondary);
+            line-height: 1.35;
+        }
+
+        .edition-badge {
+            font-size: 0.65rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .edition-badge.live {
+            background: rgba(255, 119, 0, 0.3);
+            color: #ffaa44;
+            border: 1px solid rgba(255, 119, 0, 0.6);
+        }
+
+        .edition-badge.current {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--signal-green);
+            border: 1px solid rgba(0, 255, 136, 0.5);
+        }
+
         /* Hero Section */
         .hero {
             margin-top: 80px;
@@ -612,6 +739,37 @@
             </div>
         </div>
         <nav class="nav-links">
+            <!-- Editions Drop-down -->
+            <div class="nav-dropdown" id="editionsDropdown">
+                <button class="dropdown-toggle" type="button" aria-haspopup="true" aria-expanded="false" title="Editions / संस्करणानि">
+                    <span style="font-size:1.05rem;">🌐</span>
+                    <span>Editions</span>
+                    <span style="font-size:0.7rem; opacity:0.8; margin-left:2px;">▼</span>
+                </button>
+                <div class="dropdown-menu" aria-label="Editions Menu">
+                    <a href="/" class="dropdown-item">
+                        <div class="dropdown-item-header">
+                            <span>लायब्निट्ज़ ५.० (Core DSP)</span>
+                            <span class="edition-badge current">Current</span>
+                        </div>
+                        <div class="dropdown-item-desc">Mathematical Signal Processing, Classical FFT, SFT & Wavelet Suite</div>
+                    </a>
+                    <a href="https://leibnitz5sarvam.onrender.com" target="_blank" rel="noopener noreferrer" class="dropdown-item featured" title="Sarvam AI Edition - Indic Audio & Speech Studio">
+                        <div class="dropdown-item-header">
+                            <span style="color:#ffaa44;">🎙️ Sarvam AI Edition</span>
+                            <span class="edition-badge live">Live ↗</span>
+                        </div>
+                        <div class="dropdown-item-desc">Indic Audio & Speech AI • Saaras STT • Bulbul TTS • Telecom VAD & Copilot</div>
+                    </a>
+                    <a href="/sarvam" class="dropdown-item" style="border-left-color: rgba(255,215,0,0.4);" title="Sarvam Edition Gateway">
+                        <div class="dropdown-item-header">
+                            <span style="font-size:0.84rem; color: var(--accent-gold);">📖 Sarvam Edition Portal</span>
+                            <span style="font-size:0.72rem; color: var(--text-secondary);">Info →</span>
+                        </div>
+                        <div class="dropdown-item-desc">Integration overview, architecture, and Indic audio pipeline docs</div>
+                    </a>
+                </div>
+            </div>
             <a href="#features" title="Vaiśiṣṭyāni">वैशिष्ट्यानि</a>
             <a href="#specs" title="Tantrāṁśāḥ">तन्त्रांशाः</a>
             <a href="#pricing" title="Mūlyam">मूल्यम्</a>
@@ -821,6 +979,14 @@
             <h2 class="section-title" title="Pramukhāṇi vaiśiṣṭyāni">प्रमुखाणि वैशिष्ट्यानि</h2>
             <p class="section-subtitle" title="Unnataṁ saṅkētaviślēṣaṇaṁ saṁsādhanakṣamatā ca">उन्नतं सङ्केतविश्लेषणं संसाधनक्षमता च</p>
             <div class="features-grid">
+                <div class="feature-card" style="border-color: rgba(255, 119, 0, 0.4); background: linear-gradient(135deg, rgba(255, 119, 0, 0.08) 0%, rgba(15, 21, 53, 0.9) 100%);">
+                    <div class="feature-icon" style="background: rgba(255, 119, 0, 0.15); border-color: rgba(255, 119, 0, 0.4); color: #ff7700;">🇮🇳</div>
+                    <h3 title="Sarvam AI Saṁskaraṇam - Bhāratīya-bhāṣā-dhvani-saṁsādhanam">सर्वम् AI संस्करणम् (Sarvam AI Edition)</h3>
+                    <p title="Sarvam AI ityasyāḥ Bhāratīya-bhāṣā-mādalēbhyaḥ (Saaras STT, Bulbul TTS, Indic LLM) viśēṣīkr̥taṁ dhvani-pūrvābhisanskaraṇam, svara-mātropādānam, VAD ca.">
+                        सर्वम् AI इत्यस्याः भारतीयभाषा-प्रतिरूपेभ्यः (Saaras STT, Bulbul TTS, Indic LLM) विशेषीकृतं ध्वनि-पूर्वाभिसंस्करणम्, स्वर-मात्रोपादानम्, दूरवाणी-शोधकं च।
+                    </p>
+                    <a href="/sarvam" class="btn btn-primary" style="margin-top: 1rem; padding: 0.5rem 1rem; font-size: 0.85rem; background: linear-gradient(135deg, #ff7700 0%, #00d4ff 100%);" title="Sarvam-saṁskaraṇam anviṣyatām">सर्वम्-संस्करणम् उद्घाट्यताम् →</a>
+                </div>
                 <div class="feature-card">
                     <div class="feature-icon">⚡</div>
                     <h3 title="Druta-Phūryē-rūpāntaraṇam">द्रुत-फूर्ये-रूपान्तरणम् (FFT)</h3>
@@ -1498,6 +1664,26 @@
                 heroCanvas.height = heroCanvas.offsetHeight;
             }
         });
+
+        // Setup Editions dropdown toggle
+        const editionsDropdown = document.getElementById('editionsDropdown');
+        if (editionsDropdown) {
+            const toggleBtn = editionsDropdown.querySelector('.dropdown-toggle');
+            const menu = editionsDropdown.querySelector('.dropdown-menu');
+            toggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isOpen = menu.classList.toggle('show');
+                toggleBtn.setAttribute('aria-expanded', isOpen);
+                editionsDropdown.classList.toggle('active', isOpen);
+            });
+            document.addEventListener('click', (e) => {
+                if (!editionsDropdown.contains(e.target)) {
+                    menu.classList.remove('show');
+                    toggleBtn.setAttribute('aria-expanded', 'false');
+                    editionsDropdown.classList.remove('active');
+                }
+            });
+        }
     </script>
 </body>
 </html>

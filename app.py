@@ -498,6 +498,11 @@ def normalize_block_specs(data):
 def index():
     return render_template('leibnitz.html')
 
+@app.route('/sarvam')
+def sarvam_edition():
+    sarvam_url = os.environ.get('SARVAM_DEPLOYMENT_URL', 'https://leibnitz5sarvam.onrender.com')
+    return render_template('sarvam_gateway.html', sarvam_url=sarvam_url)
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if 'user' in session:

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="sa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>लायब्निट्ज़ ५.० × सर्वम् AI (Leibnitz 5.0 for Sarvam)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@400;600;700;800&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-darker: #050812;
+            --bg-card: #0f1535;
+            --sarvam-saffron: #ff7700;
+            --signal-cyan: #00d4ff;
+            --signal-green: #00ff88;
+            --border-color: #1a2847;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b8cc;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: linear-gradient(135deg, var(--bg-darker) 0%, #0c1222 100%);
+            color: var(--text-primary);
+            font-family: 'Noto Sans Devanagari', 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .gateway-card {
+            max-width: 850px;
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 119, 0, 0.35);
+            border-radius: 1.5rem;
+            padding: 3.5rem 3rem;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 35px rgba(255, 119, 0, 0.15);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .badge {
+            display: inline-block;
+            background: rgba(255, 119, 0, 0.15);
+            border: 1px solid var(--sarvam-saffron);
+            color: var(--sarvam-saffron);
+            padding: 0.35rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        h1 {
+            font-size: 2.6rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--sarvam-saffron) 0%, #ffd700 50%, var(--signal-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+        .features-pill-row {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2.5rem;
+        }
+        .pill {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+        }
+        .btn-launch {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--sarvam-saffron) 0%, #e05d00 100%);
+            color: #ffffff;
+            font-size: 1.15rem;
+            font-weight: 700;
+            padding: 1rem 2.75rem;
+            border-radius: 30px;
+            text-decoration: none;
+            box-shadow: 0 10px 30px rgba(255, 119, 0, 0.35);
+            transition: all 0.3s ease;
+        }
+        .btn-launch:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 119, 0, 0.5);
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 2rem;
+            color: var(--signal-green);
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="gateway-card">
+        <span class="badge">सर्वम् AI सह-विकासः • Sarvam AI Edition</span>
+        <h1>लायब्निट्ज़ ५.० × सर्वम् AI</h1>
+        <p>
+            भारतीयभाषाभ्यः विशेषीकृतं ध्वनि-सङ्केतसंसाधनसाधनम्।<br>
+            सर्वम्-सारस (Speech-to-Text), सर्वम्-बुलबुल (Text-to-Speech), दूरवाणी-शोधकं तथा Indic LLM Copilot इत्येतेषां सुगमः संगमः।
+        </p>
+
+        <div class="features-pill-row">
+            <span class="pill">🎙️ Voice Activity Detection (VAD)</span>
+            <span class="pill">📞 Telephony 300-3400Hz Bandpass</span>
+            <span class="pill">🎵 F0 Pitch & Formant Analysis</span>
+            <span class="pill">🇮🇳 Saaras STT & Bulbul TTS</span>
+            <span class="pill">⚡ Modular Signal Architecture</span>
+        </div>
+
+        <div>
+            <a href="{{ sarvam_url }}" class="btn-launch" target="_blank">
+                सर्वम्-संस्करणं प्रविशताम् (Launch Studio) 🚀
+            </a>
+        </div>
+
+        <div>
+            <a href="/" class="back-link">← मुख्य-लायब्निट्ज़-पृष्ठं प्रति निवर्तताम् (Back to Main Leibnitz)</a>
+        </div>
+    </div>
+</body>
+</html>

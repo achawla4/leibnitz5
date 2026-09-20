@@ -1,0 +1,7 @@
+| **[Company](ca://s?q=Tell_me_more_about_Sarvam_AI)** | Focus Area | Key Highlights |
+| --- | --- | --- |
+| **Sarvam AI** | Foundation Models | Builds large language models for Indian languages; open-source approach; 10x cheaper than GPT-4 for Indic tasks; strong government partnerships. |
+| **[Krutrim](ca://s?q=Tell_me_more_about_Krutrim)** | Full-stack AI Platform | Founded by Ola’s Bhavish Aggarwal; India’s first AI unicorn; multilingual LLMs (10+ Indian languages); integrated AI cloud infrastructure. |
+| **[Uniphore](ca://s?q=Tell_me_more_about_Uniphore)** | Voice & Multimodal AI | Specializes in speech analytics, emotion detection, and customer experience automation; integrates voice, video, and text. |
+| **[Yellow.ai](ca://s?q=Tell_me_more_about_Yellow_ai)** | Conversational AI | Enterprise-grade chat & voice automation; supports 135+ languages; trained on billions of conversations for accuracy. |
+| **[Haptik](ca://s?q=Tell_me_more_about_Haptik)** | Conversational Interfaces | Acquired by Jio Platforms; enables enterprises to deploy intelligent chatbots and voice assistants at scale. |
