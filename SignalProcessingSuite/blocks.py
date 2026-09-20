@@ -14,13 +14,18 @@ try:
     from .filters import filter_signal
     from .wavelet import dwt
     from .davincitron import MasterDesigner
-    from .time_features import MasterAnalyzer	
+    from .time_features import MasterAnalyzer
+    from .visualization import _get_font_prop
 except ImportError:
     from fft_tools import magnitude_spectrum
     from filters import filter_signal
     from wavelet import dwt
     from davincitron import MasterDesigner
-    from time_features import MasterAnalyzer	
+    from time_features import MasterAnalyzer
+    try:
+        from visualization import _get_font_prop
+    except ImportError:
+        _get_font_prop = lambda: None
 
 
 
@@ -478,37 +483,53 @@ class TimeFeatureBlock(ProcessingBlock):
         Returns:
             PIL Image of the visualization
         """
+        fp = _get_font_prop() if callable(_get_font_prop) else None
         fig, axes = plt.subplots(2, 2, figsize=(12, 8))
-        fig.suptitle("Time-Domain Feature Analysis", fontsize=14, fontweight='bold')
+        if fp:
+            fig.suptitle("कालक्षेत्र-लक्षण-विश्लेषणम् (Kalakshetra-lakshana-vishleshanam)", fontsize=14, fontweight='bold', fontproperties=fp)
+        else:
+            fig.suptitle("कालक्षेत्र-लक्षण-विश्लेषणम् (Kalakshetra-lakshana-vishleshanam)", fontsize=14, fontweight='bold')
 
         # Plot 1: Signal waveform with statistics
         duration = len(signal) / sample_rate
         t = np.linspace(0, duration, len(signal))
-        axes[0, 0].plot(t, signal, linewidth=0.8, color='steelblue', label='Signal')
+        axes[0, 0].plot(t, signal, linewidth=0.8, color='steelblue', label='मूलसङ्केतः (Mula-sanketah)')
         axes[0, 0].axhline(y=features['mean'], color='red', linestyle='--', 
-                          label=f"Mean: {features['mean']:.3f}", linewidth=1)
+                          label=f"माध्यम् / Mean: {features['mean']:.3f}", linewidth=1)
         axes[0, 0].fill_between(
             t,
             features['mean'] - features['std'],
             features['mean'] + features['std'],
-            alpha=0.2, color='red', label=f"±σ: {features['std']:.3f}"
+            alpha=0.2, color='red', label=f"+/- sigma: {features['std']:.3f}"
         )
-        axes[0, 0].set_xlabel('Time (s)', fontsize=9)
-        axes[0, 0].set_ylabel('Amplitude', fontsize=9)
-        axes[0, 0].set_title('Waveform with Mean and Std Dev', fontsize=10)
-        axes[0, 0].legend(fontsize=8, loc='upper right')
+        if fp:
+            axes[0, 0].set_xlabel('कालः / Kalah (s)', fontsize=9, fontproperties=fp)
+            axes[0, 0].set_ylabel('आयामः / Ayamah', fontsize=9, fontproperties=fp)
+            axes[0, 0].set_title('तरङ्गरूपम् (Tarangarupam)', fontsize=10, fontproperties=fp)
+            axes[0, 0].legend(fontsize=8, loc='upper right', prop=fp)
+        else:
+            axes[0, 0].set_xlabel('कालः / Kalah (s)', fontsize=9)
+            axes[0, 0].set_ylabel('आयामः / Ayamah', fontsize=9)
+            axes[0, 0].set_title('तरङ्गरूपम् (Tarangarupam)', fontsize=10)
+            axes[0, 0].legend(fontsize=8, loc='upper right')
         axes[0, 0].grid(alpha=0.3)
 
         # Plot 2: Histogram with distribution
         axes[0, 1].hist(signal, bins=40, color='steelblue', alpha=0.7, edgecolor='black', density=True)
         axes[0, 1].axvline(x=features['mean'], color='red', linestyle='--', 
-                           label=f"Mean: {features['mean']:.3f}", linewidth=1)
+                           label=f"माध्यम् / Mean: {features['mean']:.3f}", linewidth=1)
         axes[0, 1].axvline(x=features['median'], color='green', linestyle='--', 
-                           label=f"Median: {features['median']:.3f}", linewidth=1)
-        axes[0, 1].set_xlabel('Amplitude', fontsize=9)
-        axes[0, 1].set_ylabel('Density', fontsize=9)
-        axes[0, 1].set_title('Amplitude Distribution', fontsize=10)
-        axes[0, 1].legend(fontsize=8, loc='upper right')
+                           label=f"मध्यस्थम् / Median: {features['median']:.3f}", linewidth=1)
+        if fp:
+            axes[0, 1].set_xlabel('आयामः / Ayamah', fontsize=9, fontproperties=fp)
+            axes[0, 1].set_ylabel('सान्द्रता / Sandrata', fontsize=9, fontproperties=fp)
+            axes[0, 1].set_title('आयाम-वितरणम् (Ayama-vitaranam)', fontsize=10, fontproperties=fp)
+            axes[0, 1].legend(fontsize=8, loc='upper right', prop=fp)
+        else:
+            axes[0, 1].set_xlabel('आयामः / Ayamah', fontsize=9)
+            axes[0, 1].set_ylabel('सान्द्रता / Sandrata', fontsize=9)
+            axes[0, 1].set_title('आयाम-वितरणम् (Ayama-vitaranam)', fontsize=10)
+            axes[0, 1].legend(fontsize=8, loc='upper right')
         axes[0, 1].grid(alpha=0.3, axis='y')
 
         # Plot 3: Feature comparison (normalized bar chart)
@@ -523,34 +544,38 @@ class TimeFeatureBlock(ProcessingBlock):
         
         colors = plt.cm.viridis(feature_values_norm)
         axes[1, 0].barh(feature_names, feature_values_norm, color=colors)
-        axes[1, 0].set_xlabel('Normalized Value', fontsize=9)
-        axes[1, 0].set_title('Feature Magnitudes (Normalized)', fontsize=10)
+        if fp:
+            axes[1, 0].set_xlabel('प्रसामान्यीकृत-मानम् / Prasamanyikrita-manam', fontsize=9, fontproperties=fp)
+            axes[1, 0].set_title('लक्षण-परिमाणानि (Lakshana-parimanani)', fontsize=10, fontproperties=fp)
+        else:
+            axes[1, 0].set_xlabel('प्रसामान्यीकृत-मानम् / Prasamanyikrita-manam', fontsize=9)
+            axes[1, 0].set_title('लक्षण-परिमाणानि (Lakshana-parimanani)', fontsize=10)
         axes[1, 0].grid(alpha=0.3, axis='x')
 
         # Plot 4: Summary statistics text box
         summary_text = f"""
-SUMMARY STATISTICS
-
-Mean:           {features['mean']:>10.4f}
-Median:         {features['median']:>10.4f}
-Std Dev:        {features['std']:>10.4f}
-Variance:       {features['variance']:>10.4f}
-
-Min:            {features['min']:>10.4f}
-Max:            {features['max']:>10.4f}
-Peak-to-Peak:   {features['peak_to_peak']:>10.4f}
-RMS:            {features['rms']:>10.4f}
-
-Skewness:       {features['skewness']:>10.4f}
-Kurtosis:       {features['kurtosis']:>10.4f}
-Crest Factor:   {features['crest_factor']:>10.4f}
-Zero Cross:     {features['zero_crossing_rate']:>10.4f}
+SUMMARY STATISTICS (Sankhyiki)
+Mean (Madhyam):        {features['mean']:>10.4f}
+Median (Madhyastham):  {features['median']:>10.4f}
+Std Dev (Manaka-vic):  {features['std']:>10.4f}
+Variance (Prasaranam): {features['variance']:>10.4f}
+Min (Nyunatamam):      {features['min']:>10.4f}
+Max (Adhikatamam):     {features['max']:>10.4f}
+Peak-to-Peak:          {features['peak_to_peak']:>10.4f}
+RMS:                   {features['rms']:>10.4f}
+Skewness:              {features['skewness']:>10.4f}
+Kurtosis:              {features['kurtosis']:>10.4f}
+Crest Factor:          {features['crest_factor']:>10.4f}
+Zero Cross:            {features['zero_crossing_rate']:>10.4f}
         """
         axes[1, 1].text(0.05, 0.95, summary_text, fontfamily='monospace', fontsize=8,
                        verticalalignment='top', 
                        bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8))
         axes[1, 1].axis('off')
-        axes[1, 1].set_title('Feature Summary', fontsize=10)
+        if fp:
+            axes[1, 1].set_title('लक्षण-सारांशः (Lakshana-saramshah)', fontsize=10, fontproperties=fp)
+        else:
+            axes[1, 1].set_title('लक्षण-सारांशः (Lakshana-saramshah)', fontsize=10)
 
         plt.tight_layout()
 

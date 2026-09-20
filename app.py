@@ -46,6 +46,21 @@ DEMO_USER = {"username": "demo", "password": "demo123"}
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 USERS_FILE = os.path.join(BASE_DIR, 'users.json')
 
+# Bundled Devanagari font setup for Matplotlib
+FONT_DIR = os.path.join(BASE_DIR, 'fonts')
+DEV_FONT_PATH = os.path.join(FONT_DIR, 'NotoSansDevanagari.ttf')
+DEV_FONT_PROP = None
+if os.path.exists(DEV_FONT_PATH):
+    try:
+        import matplotlib.font_manager as fm
+        fm.fontManager.addfont(DEV_FONT_PATH)
+        DEV_FONT_PROP = fm.FontProperties(fname=DEV_FONT_PATH)
+        dev_font_name = DEV_FONT_PROP.get_name()
+        matplotlib.rcParams['font.sans-serif'] = [dev_font_name, 'Noto Sans Devanagari', 'Nirmala UI', 'DejaVu Sans', 'Arial']
+        matplotlib.rcParams['font.family'] = 'sans-serif'
+    except Exception as e:
+        print(f"Font initialization error: {e}")
+
 def load_users():
     if not os.path.exists(USERS_FILE):
         users = {DEMO_USER['username']: DEMO_USER['password']}
@@ -861,14 +876,22 @@ def generate_suite_plot(original_filename, operation, original_signal, result_da
         ax1.set_facecolor('#0a0e27')
         ax2.set_facecolor('#0a0e27')
         
-        plot_time(original_signal[:1000], sample_rate=sample_rate, ax=ax1, title="समयक्षेत्रसङ्केतः (Time Domain)")
-        ax1.set_xlabel("कालः (s)", color='#b0b8cc')
-        ax1.set_ylabel("आयामः", color='#b0b8cc')
+        plot_time(original_signal[:1000], sample_rate=sample_rate, ax=ax1, title="समयक्षेत्रसङ्केतः (Samayakshetra-sanketah)", fontproperties=DEV_FONT_PROP)
+        if DEV_FONT_PROP:
+            ax1.set_xlabel("कालः / Kalah (s)", color='#b0b8cc', fontproperties=DEV_FONT_PROP)
+            ax1.set_ylabel("आयामः / Ayamah", color='#b0b8cc', fontproperties=DEV_FONT_PROP)
+        else:
+            ax1.set_xlabel("कालः / Kalah (s)", color='#b0b8cc')
+            ax1.set_ylabel("आयामः / Ayamah", color='#b0b8cc')
         ax1.get_lines()[0].set_color('#00ff88')
         
-        plot_frequency(original_signal, sample_rate=sample_rate, ax=ax2, db=False, title="आवृत्तिवर्णक्रमः (द्रुत-फूर्ये FFT)")
-        ax2.set_xlabel("आवृत्तिः (Hz)", color='#b0b8cc')
-        ax2.set_ylabel("परिमाणम्", color='#b0b8cc')
+        plot_frequency(original_signal, sample_rate=sample_rate, ax=ax2, db=False, title="आवृत्तिवर्णक्रमः / Avrittivarnakramah (FFT)", fontproperties=DEV_FONT_PROP)
+        if DEV_FONT_PROP:
+            ax2.set_xlabel("आवृत्तिः / Avrittih (Hz)", color='#b0b8cc', fontproperties=DEV_FONT_PROP)
+            ax2.set_ylabel("परिमाणम् / Parimanam", color='#b0b8cc', fontproperties=DEV_FONT_PROP)
+        else:
+            ax2.set_xlabel("आवृत्तिः / Avrittih (Hz)", color='#b0b8cc')
+            ax2.set_ylabel("परिमाणम् / Parimanam", color='#b0b8cc')
         ax2.get_lines()[0].set_color('#00d4ff')
         ax2.set_xlim(0, sample_rate / 2.0)
 
@@ -878,9 +901,13 @@ def generate_suite_plot(original_filename, operation, original_signal, result_da
         ax1.set_facecolor('#0a0e27')
         ax2.set_facecolor('#0a0e27')
         
-        plot_frequency(original_signal, sample_rate=sample_rate, ax=ax1, db=False, title="आवृत्तिवर्णक्रमः (द्रुत-फूर्ये FFT)")
-        ax1.set_xlabel("आवृत्तिः (Hz)", color='#b0b8cc')
-        ax1.set_ylabel("परिमाणम्", color='#b0b8cc')
+        plot_frequency(original_signal, sample_rate=sample_rate, ax=ax1, db=False, title="आवृत्तिवर्णक्रमः / Avrittivarnakramah (FFT)", fontproperties=DEV_FONT_PROP)
+        if DEV_FONT_PROP:
+            ax1.set_xlabel("आवृत्तिः / Avrittih (Hz)", color='#b0b8cc', fontproperties=DEV_FONT_PROP)
+            ax1.set_ylabel("परिमाणम् / Parimanam", color='#b0b8cc', fontproperties=DEV_FONT_PROP)
+        else:
+            ax1.set_xlabel("आवृत्तिः / Avrittih (Hz)", color='#b0b8cc')
+            ax1.set_ylabel("परिमाणम् / Parimanam", color='#b0b8cc')
         ax1.get_lines()[0].set_color('#00d4ff')
         ax1.set_xlim(0, sample_rate / 2.0)
 
@@ -889,10 +916,15 @@ def generate_suite_plot(original_filename, operation, original_signal, result_da
             sample_rate=sample_rate,
             ax=ax2,
             db=False,
-            title="समयक्षेत्रे प्रतिलोम-द्रुत-फूर्ये (IFFT)"
+            title="समयक्षेत्रे प्रतिलोम-द्रुत-फूर्ये (Samayakshetre IFFT)",
+            fontproperties=DEV_FONT_PROP
         )
-        ax2.set_xlabel("प्रतिचयन-क्रमाङ्कः", color='#b0b8cc')
-        ax2.set_ylabel("आयामः", color='#b0b8cc')
+        if DEV_FONT_PROP:
+            ax2.set_xlabel("प्रतिचयन-क्रमाङ्कः / Praticayana-kramankah", color='#b0b8cc', fontproperties=DEV_FONT_PROP)
+            ax2.set_ylabel("आयामः / Ayamah", color='#b0b8cc', fontproperties=DEV_FONT_PROP)
+        else:
+            ax2.set_xlabel("प्रतिचयन-क्रमाङ्कः / Praticayana-kramankah", color='#b0b8cc')
+            ax2.set_ylabel("आयामः / Ayamah", color='#b0b8cc')
 
         lines = ax2.get_lines()
         if lines:
@@ -902,12 +934,18 @@ def generate_suite_plot(original_filename, operation, original_signal, result_da
 
     elif operation == 'filter':
         times = np.arange(min(len(original_signal), 1000)) / sample_rate
-        ax.plot(times, original_signal[:1000], label='मूलसङ्केतः', alpha=0.7, color='#ff3344')
-        ax.plot(times, result_data['filtered'][:1000], label='शोधितसङ्केतः', color='#00ff88')
-        ax.set_title('निम्नगामि-शोधितसङ्केतः (Filtered Signal)')
-        ax.set_xlabel('कालः (s)')
-        ax.set_ylabel('आयामः')
-        ax.legend()
+        ax.plot(times, original_signal[:1000], label='मूलसङ्केतः (Mula-sanketah)', alpha=0.7, color='#ff3344')
+        ax.plot(times, result_data['filtered'][:1000], label='शोधितसङ्केतः (Shodhita-sanketah)', color='#00ff88')
+        if DEV_FONT_PROP:
+            ax.set_title('निम्नगामि-शोधितसङ्केतः (Nimnagami-shodhita-sanketah)', color='#ffffff', fontproperties=DEV_FONT_PROP)
+            ax.set_xlabel('कालः / Kalah (s)', color='#b0b8cc', fontproperties=DEV_FONT_PROP)
+            ax.set_ylabel('आयामः / Ayamah', color='#b0b8cc', fontproperties=DEV_FONT_PROP)
+            ax.legend(prop=DEV_FONT_PROP)
+        else:
+            ax.set_title('निम्नगामि-शोधितसङ्केतः (Nimnagami-shodhita-sanketah)', color='#ffffff')
+            ax.set_xlabel('कालः / Kalah (s)', color='#b0b8cc')
+            ax.set_ylabel('आयामः / Ayamah', color='#b0b8cc')
+            ax.legend()
         ax.grid(True, alpha=0.3)
 
     elif operation == 'wavelet':
@@ -916,10 +954,15 @@ def generate_suite_plot(original_filename, operation, original_signal, result_da
         ax1.set_facecolor('#0a0e27')
         
         coeffs = result_data['_coeffs_obj']
-        plot_wavelet_coefficients(coeffs, ax=ax1)
-        ax1.set_title("वीचिका-गुणाङ्काः (Wavelet Coefficients)")
-        ax1.set_xlabel("गुणाङ्क-निर्देशाङ्कः")
-        ax1.set_ylabel("प्रसामान्यीकृत-स्तरः")
+        plot_wavelet_coefficients(coeffs, ax=ax1, fontproperties=DEV_FONT_PROP)
+        if DEV_FONT_PROP:
+            ax1.set_title("वीचिका-गुणाङ्काः (Vicika-gunankah)", color='#ffffff', fontproperties=DEV_FONT_PROP)
+            ax1.set_xlabel("गुणाङ्क-निर्देशाङ्कः / Gunanka-nirdeshankah", color='#b0b8cc', fontproperties=DEV_FONT_PROP)
+            ax1.set_ylabel("प्रसामान्यीकृत-स्तरः / Prasamanyikrita-starah", color='#b0b8cc', fontproperties=DEV_FONT_PROP)
+        else:
+            ax1.set_title("वीचिका-गुणाङ्काः (Vicika-gunankah)", color='#ffffff')
+            ax1.set_xlabel("गुणाङ्क-निर्देशाङ्कः / Gunanka-nirdeshankah", color='#b0b8cc')
+            ax1.set_ylabel("प्रसामान्यीकृत-स्तरः / Prasamanyikrita-starah", color='#b0b8cc')
         ax1.grid(True, alpha=0.3)
 
     elif operation == 'sft':
@@ -957,10 +1000,16 @@ def generate_suite_plot(original_filename, operation, original_signal, result_da
                 col = colors[color_idx % len(colors)]
                 ax1.plot(P_t, label=f"t = {t_val:.2f}", color=col, alpha=0.8)
                 color_idx += 1
-        ax1.set_title("श्रोडिङ्गर-स्थान-तरङ्गफलन-विकासः", color='#ffffff', fontsize=11, pad=8)
-        ax1.set_xlabel("स्थान-निर्देशाङ्कः (x)", color='#b0b8cc', fontsize=9)
-        ax1.set_ylabel("सम्भाव्यता-सान्द्रता", color='#b0b8cc', fontsize=9)
-        ax1.legend(loc="upper right", facecolor='#0f1535', edgecolor='#1a2847', fontsize=8)
+        if DEV_FONT_PROP:
+            ax1.set_title("श्रोडिङ्गर-स्थान-तरङ्गफलन-विकासः (Schroedinger Sthana Tarangaphalana)", color='#ffffff', fontsize=11, pad=8, fontproperties=DEV_FONT_PROP)
+            ax1.set_xlabel("स्थान-निर्देशाङ्कः / Sthana-nirdeshankah (x)", color='#b0b8cc', fontsize=9, fontproperties=DEV_FONT_PROP)
+            ax1.set_ylabel("सम्भाव्यता-सान्द्रता / Sambhavyata-sandrata", color='#b0b8cc', fontsize=9, fontproperties=DEV_FONT_PROP)
+            ax1.legend(loc="upper right", facecolor='#0f1535', edgecolor='#1a2847', fontsize=8, prop=DEV_FONT_PROP)
+        else:
+            ax1.set_title("श्रोडिङ्गर-स्थान-तरङ्गफलन-विकासः (Schroedinger Sthana Tarangaphalana)", color='#ffffff', fontsize=11, pad=8)
+            ax1.set_xlabel("स्थान-निर्देशाङ्कः / Sthana-nirdeshankah (x)", color='#b0b8cc', fontsize=9)
+            ax1.set_ylabel("सम्भाव्यता-सान्द्रता / Sambhavyata-sandrata", color='#b0b8cc', fontsize=9)
+            ax1.legend(loc="upper right", facecolor='#0f1535', edgecolor='#1a2847', fontsize=8)
         ax1.grid(True, alpha=0.1)
         ax1.tick_params(colors='#b0b8cc', labelsize=8)
 
@@ -968,43 +1017,66 @@ def generate_suite_plot(original_filename, operation, original_signal, result_da
         im = ax2.imshow(operator_matrix_mag, cmap='inferno', extent=[0, N, 0, N], origin='lower')
         cbar = fig.colorbar(im, ax=ax2, shrink=0.8)
         cbar.ax.yaxis.set_tick_params(color='#b0b8cc', labelsize=8)
-        cbar.ax.set_ylabel('प्रचालक-व्यूह-परिमाणम् |P_sc[j,k]|', color='#b0b8cc', rotation=270, labelpad=15, fontsize=8)
-        ax2.set_title("अर्धशास्त्रीय-प्रचालक-सान्द्रता-व्यूहः $|P_{sc}|$", color='#ffffff', fontsize=11, pad=8)
-        ax2.set_xlabel("अवस्था-निर्देशाङ्कः (k)", color='#b0b8cc', fontsize=9)
-        ax2.set_ylabel("अवस्था-निर्देशाङ्कः (j)", color='#b0b8cc', fontsize=9)
+        if DEV_FONT_PROP:
+            cbar.ax.set_ylabel('प्रचालक-व्यूह-परिमाणम् / Pracalaka-vyuha-parimanam |P_sc[j,k]|', color='#b0b8cc', rotation=270, labelpad=15, fontsize=8, fontproperties=DEV_FONT_PROP)
+            ax2.set_title("अर्धशास्त्रीय-प्रचालक-सान्द्रता-व्यूहः (Ardhashastriya Pracalaka) $|P_{sc}|$", color='#ffffff', fontsize=11, pad=8, fontproperties=DEV_FONT_PROP)
+            ax2.set_xlabel("अवस्था-निर्देशाङ्कः / Avastha-nirdeshankah (k)", color='#b0b8cc', fontsize=9, fontproperties=DEV_FONT_PROP)
+            ax2.set_ylabel("अवस्था-निर्देशाङ्कः / Avastha-nirdeshankah (j)", color='#b0b8cc', fontsize=9, fontproperties=DEV_FONT_PROP)
+        else:
+            cbar.ax.set_ylabel('प्रचालक-व्यूह-परिमाणम् / Pracalaka-vyuha-parimanam |P_sc[j,k]|', color='#b0b8cc', rotation=270, labelpad=15, fontsize=8)
+            ax2.set_title("अर्धशास्त्रीय-प्रचालक-सान्द्रता-व्यूहः (Ardhashastriya Pracalaka) $|P_{sc}|$", color='#ffffff', fontsize=11, pad=8)
+            ax2.set_xlabel("अवस्था-निर्देशाङ्कः / Avastha-nirdeshankah (k)", color='#b0b8cc', fontsize=9)
+            ax2.set_ylabel("अवस्था-निर्देशाङ्कः / Avastha-nirdeshankah (j)", color='#b0b8cc', fontsize=9)
         ax2.tick_params(colors='#b0b8cc', labelsize=8)
 
         # Plot 3: Frequency-domain Fourier probabilities comparison
-        ax3.plot(freqs, final_P_FT, label="प्रमात्र-फूर्ये (QFT)", color='#00ff88', linewidth=2)
+        ax3.plot(freqs, final_P_FT, label="प्रमात्र-फूर्ये / Pramatra-FFT (QFT)", color='#00ff88', linewidth=2)
         ax3.fill_between(freqs, final_P_FT, alpha=0.1, color='#00ff88')
-        ax3.plot(freqs, final_P_proj_FT, label=f"प्रक्षेप-SFT (alpha={alpha})", color='#ffd700', linewidth=1.5)
-        ax3.plot(freqs, final_P_mod_FT, label="विकार-SFT", color='#00d4ff', linewidth=1.2, linestyle=':')
-        ax3.plot(freqs, final_P_col_FT, label="शास्त्रीय-संपाती-DFT", color='#ff3344', linestyle='--', alpha=0.7, linewidth=1.2)
-        ax3.set_title("आवृत्तिक्षेत्रीय-फूर्ये-सम्भाव्यताः", color='#ffffff', fontsize=11, pad=8)
-        ax3.set_xlabel("आवृत्तिः (Hz)", color='#b0b8cc', fontsize=9)
-        ax3.set_ylabel("सम्भाव्यता-सान्द्रता", color='#b0b8cc', fontsize=9)
-        ax3.legend(loc="upper right", facecolor='#0f1535', edgecolor='#1a2847', fontsize=8)
+        ax3.plot(freqs, final_P_proj_FT, label=f"प्रक्षेप-SFT / Prakshepa-SFT (alpha={alpha})", color='#ffd700', linewidth=1.5)
+        ax3.plot(freqs, final_P_mod_FT, label="विकार-SFT / Vikara-SFT", color='#00d4ff', linewidth=1.2, linestyle=':')
+        ax3.plot(freqs, final_P_col_FT, label="शास्त्रीय-संपाती-DFT / Shastriya-sampati-DFT", color='#ff3344', linestyle='--', alpha=0.7, linewidth=1.2)
+        if DEV_FONT_PROP:
+            ax3.set_title("आवृत्तिक्षेत्रीय-फूर्ये-सम्भाव्यताः (Avrittikshetriya-FFT-sambhavyatah)", color='#ffffff', fontsize=11, pad=8, fontproperties=DEV_FONT_PROP)
+            ax3.set_xlabel("आवृत्तिः / Avrittih (Hz)", color='#b0b8cc', fontsize=9, fontproperties=DEV_FONT_PROP)
+            ax3.set_ylabel("सम्भाव्यता-सान्द्रता / Sambhavyata-sandrata", color='#b0b8cc', fontsize=9, fontproperties=DEV_FONT_PROP)
+            ax3.legend(loc="upper right", facecolor='#0f1535', edgecolor='#1a2847', fontsize=8, prop=DEV_FONT_PROP)
+        else:
+            ax3.set_title("आवृत्तिक्षेत्रीय-फूर्ये-सम्भाव्यताः (Avrittikshetriya-FFT-sambhavyatah)", color='#ffffff', fontsize=11, pad=8)
+            ax3.set_xlabel("आवृत्तिः / Avrittih (Hz)", color='#b0b8cc', fontsize=9)
+            ax3.set_ylabel("सम्भाव्यता-सान्द्रता / Sambhavyata-sandrata", color='#b0b8cc', fontsize=9)
+            ax3.legend(loc="upper right", facecolor='#0f1535', edgecolor='#1a2847', fontsize=8)
         ax3.grid(True, alpha=0.1)
         ax3.tick_params(colors='#b0b8cc', labelsize=8)
 
         # Plot 4: Spectral Fidelities over Time Steps
         time_axis = np.arange(1, len(fidelity_proj_history) + 1) * dt
-        ax4.plot(time_axis, fidelity_proj_history, color='#ffd700', marker='.', linewidth=1.5, label="प्रक्षेप-SFT विश्वसनीयता")
-        ax4.plot(time_axis, fidelity_mod_history, color='#00d4ff', marker='x', linewidth=1.2, label="विकार-SFT विश्वसनीयता", alpha=0.8)
-        ax4.set_title("कालविकासे वर्णक्रम-विश्वसनीयता", color='#ffffff', fontsize=11, pad=8)
-        ax4.set_xlabel("कालः (s)", color='#b0b8cc', fontsize=9)
-        ax4.set_ylabel("वर्णक्रम-विश्वसनीयता", color='#b0b8cc', fontsize=9)
+        ax4.plot(time_axis, fidelity_proj_history, color='#ffd700', marker='.', linewidth=1.5, label="प्रक्षेप-SFT विश्वसनीयता (Prakshepa-SFT)")
+        ax4.plot(time_axis, fidelity_mod_history, color='#00d4ff', marker='x', linewidth=1.2, label="विकार-SFT विश्वसनीयता (Vikara-SFT)", alpha=0.8)
+        if DEV_FONT_PROP:
+            ax4.set_title("कालविकासे वर्णक्रम-विश्वसनीयता (Kala-vikase varnakrama-vishvasaniyata)", color='#ffffff', fontsize=11, pad=8, fontproperties=DEV_FONT_PROP)
+            ax4.set_xlabel("कालः / Kalah (s)", color='#b0b8cc', fontsize=9, fontproperties=DEV_FONT_PROP)
+            ax4.set_ylabel("वर्णक्रम-विश्वसनीयता / Varnakrama-vishvasaniyata", color='#b0b8cc', fontsize=9, fontproperties=DEV_FONT_PROP)
+            ax4.legend(loc="lower right", facecolor='#0f1535', edgecolor='#1a2847', fontsize=8, prop=DEV_FONT_PROP)
+        else:
+            ax4.set_title("कालविकासे वर्णक्रम-विश्वसनीयता (Kala-vikase varnakrama-vishvasaniyata)", color='#ffffff', fontsize=11, pad=8)
+            ax4.set_xlabel("कालः / Kalah (s)", color='#b0b8cc', fontsize=9)
+            ax4.set_ylabel("वर्णक्रम-विश्वसनीयता / Varnakrama-vishvasaniyata", color='#b0b8cc', fontsize=9)
+            ax4.legend(loc="lower right", facecolor='#0f1535', edgecolor='#1a2847', fontsize=8)
         ax4.set_ylim(-0.05, 1.05)
         ax4.grid(True, alpha=0.1)
-        ax4.legend(loc="lower right", facecolor='#0f1535', edgecolor='#1a2847', fontsize=8)
         ax4.tick_params(colors='#b0b8cc', labelsize=8)
 
     else:
         times = np.arange(min(len(original_signal), 1000)) / sample_rate
         ax.plot(times, original_signal[:1000], color='#ffd700')
-        ax.set_title('सङ्केत-चित्रीकरणम् (Signal Visualization)')
-        ax.set_xlabel('कालः (s)')
-        ax.set_ylabel('आयामः')
+        if DEV_FONT_PROP:
+            ax.set_title('सङ्केत-चित्रीकरणम् (Sanketa-citrikaranam)', color='#ffffff', fontproperties=DEV_FONT_PROP)
+            ax.set_xlabel('कालः / Kalah (s)', color='#b0b8cc', fontproperties=DEV_FONT_PROP)
+            ax.set_ylabel('आयामः / Ayamah', color='#b0b8cc', fontproperties=DEV_FONT_PROP)
+        else:
+            ax.set_title('सङ्केत-चित्रीकरणम् (Sanketa-citrikaranam)', color='#ffffff')
+            ax.set_xlabel('कालः / Kalah (s)', color='#b0b8cc')
+            ax.set_ylabel('आयामः / Ayamah', color='#b0b8cc')
         ax.grid(True, alpha=0.3)
 
     fig.tight_layout()
