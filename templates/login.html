@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sa">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leibnitz 5.0 - Login</title>
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>लायब्निट्ज़ ५.० - प्रवेशः</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Mukta:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --dark-bg: #0a0e27;
@@ -26,7 +26,7 @@
         body {
             background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 100%);
             color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
+            font-family: 'Noto Sans Devanagari', 'Mukta', 'Inter', sans-serif;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -52,7 +52,7 @@
             border-radius: 1rem;
             padding: 3rem 2.5rem;
             width: 100%;
-            max-width: 420px;
+            max-width: 440px;
             box-shadow: 0 20px 60px rgba(0, 255, 136, 0.1);
             position: relative;
             z-index: 1;
@@ -64,12 +64,13 @@
         }
 
         .leibnitz-name {
-            font-family: 'Great Vibes', cursive;
+            font-family: 'Great Vibes', 'Noto Sans Devanagari', cursive;
             font-size: 3.2rem;
             background: linear-gradient(135deg, var(--signal-green) 0%, var(--signal-blue) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 0.3rem;
+            line-height: 1.2;
         }
 
         .tagline {
@@ -80,13 +81,6 @@
             text-transform: uppercase;
         }
 
-        h2 {
-            text-align: center;
-            margin: 2rem 0 1.5rem;
-            color: var(--signal-green);
-            font-weight: 600;
-        }
-
         .form-group {
             margin-bottom: 1.5rem;
         }
@@ -95,7 +89,7 @@
             display: block;
             margin-bottom: 0.5rem;
             color: var(--text-secondary);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
 
         input {
@@ -106,6 +100,7 @@
             border-radius: 0.5rem;
             color: white;
             font-size: 1rem;
+            font-family: inherit;
             transition: all 0.3s ease;
         }
 
@@ -127,6 +122,7 @@
             cursor: pointer;
             margin-top: 1rem;
             transition: all 0.3s ease;
+            font-family: inherit;
         }
 
         .btn-login:hover {
@@ -171,12 +167,13 @@
             background: transparent;
             border: none;
             color: var(--text-secondary);
-            font-size: 0.95rem;
+            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             border-radius: 0.35rem;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             text-align: center;
+            font-family: inherit;
         }
 
         .tab-btn:hover {
@@ -205,6 +202,7 @@
             text-align: center;
             margin-top: 2rem;
             color: var(--text-secondary);
+            font-size: 0.95rem;
         }
 
         .guest-link a {
@@ -220,19 +218,19 @@
 <body>
     <div class="login-container">
         <div class="logo">
-            <h1 class="leibnitz-name">Leibnitz 5.0</h1>
-            <p class="tagline">Signal Processing Suite</p>
+            <h1 class="leibnitz-name" title="Lāyabniṭza 5.0">लायब्निट्ज़ ५.०</h1>
+            <p class="tagline" title="Saṅkētasaṁsādhana-saṅgrahaḥ">सङ्केतसंसाधनसङ्ग्रहः</p>
         </div>
 
         <div class="tabs">
-            <button id="tab-register" class="tab-btn {% if active_tab == 'register' %}active{% endif %}" onclick="switchTab('register')">Register</button>
-            <button id="tab-login" class="tab-btn {% if active_tab == 'login' %}active{% endif %}" onclick="switchTab('login')">Sign In</button>
+            <button id="tab-register" class="tab-btn {% if active_tab == 'register' %}active{% endif %}" onclick="switchTab('register')" title="Pañjīkaraṇam">पञ्जीकरणम्</button>
+            <button id="tab-login" class="tab-btn {% if active_tab == 'login' %}active{% endif %}" onclick="switchTab('login')" title="Pravēśaḥ">प्रवेशः</button>
         </div>
 
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="message {{ category }}">{{ message }}</div>
+                    <div class="message {{ category }}" title="Sūcanā">{{ message }}</div>
                 {% endfor %}
             {% endif %}
         {% endwith %}
@@ -242,21 +240,21 @@
             <input type="hidden" name="action" value="register">
             
             <div class="form-group">
-                <label for="reg-username">Username</label>
-                <input type="text" id="reg-username" name="username" value="{% if active_tab == 'register' %}{{ username or '' }}{% endif %}" required autocomplete="username">
+                <label for="reg-username" title="Prayōktr̥-nāma">प्रयोक्तानाम</label>
+                <input type="text" id="reg-username" name="username" value="{% if active_tab == 'register' %}{{ username or '' }}{% endif %}" required autocomplete="username" title="Prayōktr̥-nāma praviśantu" placeholder="प्रयोक्तानाम प्रविशन्तु">
             </div>
 
             <div class="form-group">
-                <label for="reg-password">Password</label>
-                <input type="password" id="reg-password" name="password" required autocomplete="new-password">
+                <label for="reg-password" title="Gupta-śabdaḥ">गुप्तशब्दः</label>
+                <input type="password" id="reg-password" name="password" required autocomplete="new-password" title="Gupta-śabdaṁ praviśantu" placeholder="गुप्तशब्दं प्रविशन्तु">
             </div>
 
             <div class="form-group">
-                <label for="confirm_password">Confirm Password</label>
-                <input type="password" id="confirm_password" name="confirm_password" required autocomplete="new-password">
+                <label for="confirm_password" title="Gupta-śabdasya puṣṭiḥ">गुप्तशब्दस्य पुष्टिः</label>
+                <input type="password" id="confirm_password" name="confirm_password" required autocomplete="new-password" title="Punaḥ gupta-śabdaṁ praviśantu" placeholder="पुनः गुप्तशब्दं प्रविशन्तु">
             </div>
 
-            <button type="submit" class="btn-login">REGISTER</button>
+            <button type="submit" class="btn-login" title="Pañjīkriyatām">पञ्जीक्रियताम्</button>
         </form>
 
         <!-- Login Form -->
@@ -264,21 +262,21 @@
             <input type="hidden" name="action" value="login">
             
             <div class="form-group">
-                <label for="login-username">Username</label>
-                <input type="text" id="login-username" name="username" value="{% if active_tab == 'login' %}{{ username or '' }}{% endif %}" required autocomplete="username">
+                <label for="login-username" title="Prayōktr̥-nāma">प्रयोक्तानाम</label>
+                <input type="text" id="login-username" name="username" value="{% if active_tab == 'login' %}{{ username or '' }}{% endif %}" required autocomplete="username" title="Prayōktr̥-nāma praviśantu" placeholder="प्रयोक्तानाम प्रविशन्तु">
             </div>
 
             <div class="form-group">
-                <label for="login-password">Password</label>
-                <input type="password" id="login-password" name="password" required autocomplete="current-password">
+                <label for="login-password" title="Gupta-śabdaḥ">गुप्तशब्दः</label>
+                <input type="password" id="login-password" name="password" required autocomplete="current-password" title="Gupta-śabdaṁ praviśantu" placeholder="गुप्तशब्दं प्रविशन्तु">
             </div>
 
-            <button type="submit" class="btn-login">LOGIN</button>
+            <button type="submit" class="btn-login" title="Praviśyatām">प्रविश्यताम्</button>
         </form>
 
         <div class="guest-link">
-            <p>Demo Credentials: <strong>demo</strong> / <strong>demo123</strong></p>
-            <a href="/">← Back to Homepage</a>
+            <p title="Nidarśana-pramāṇapatrāṇi: demo / demo123">निदर्शन-प्रमाणपत्राणि: <strong>demo</strong> / <strong>demo123</strong></p>
+            <a href="/" title="Mukhyapr̥ṣṭhaṁ prati nivr̥ttatām">← मुख्यपृष्ठं प्रति निवृत्तताम्</a>
         </div>
     </div>
 

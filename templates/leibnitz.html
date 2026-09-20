@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sa">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leibnitz 5.0 Signal Processing Suite</title>
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>लायब्निट्ज़ ५.० सङ्केतसंसाधनसङ्ग्रहः</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Mukta:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -32,7 +32,7 @@
         body {
             background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 100%);
             color: var(--text-primary);
-            font-family: 'Inter', 'Segoe UI', sans-serif;
+            font-family: 'Noto Sans Devanagari', 'Mukta', 'Inter', 'Segoe UI', sans-serif;
             line-height: 1.6;
             overflow-x: hidden;
         }
@@ -60,7 +60,7 @@
         }
 
         .leibnitz-name {
-            font-family: 'Great Vibes', cursive;
+            font-family: 'Great Vibes', 'Noto Sans Devanagari', cursive;
             font-size: 2.2rem;
             font-weight: 400;
             background: linear-gradient(135deg, var(--signal-green) 0%, var(--signal-blue) 100%);
@@ -72,7 +72,7 @@
         }
 
         .company-tag {
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 2px;
             color: var(--text-secondary);
@@ -87,7 +87,7 @@
         .nav-links a {
             color: var(--text-secondary);
             text-decoration: none;
-            font-size: 0.95rem;
+            font-size: 1rem;
             font-weight: 500;
             transition: color 0.3s ease;
         }
@@ -149,61 +149,57 @@
         }
 
         .hero-text h1 {
-            font-size: 4.5rem;
+            font-size: 3.2rem;
             font-weight: 800;
-            line-height: 1.1;
+            line-height: 1.2;
             margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, var(--signal-green) 0%, var(--signal-blue) 50%, #ffffff 100%);
+            background: linear-gradient(135deg, var(--signal-green) 0%, var(--signal-blue) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            animation: slideInLeft 1s ease-out;
         }
 
         .hero-text p {
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             color: var(--text-secondary);
             margin-bottom: 2.5rem;
             line-height: 1.8;
-            animation: slideInLeft 1s ease-out 0.2s backwards;
         }
 
         .cta-group {
             display: flex;
             gap: 1.5rem;
-            animation: slideInLeft 1s ease-out 0.4s backwards;
+            flex-wrap: wrap;
         }
 
         .btn {
-            padding: 0.9rem 2.5rem;
-            border: none;
+            padding: 0.9rem 2rem;
             border-radius: 0.5rem;
-            font-size: 1.1rem;
-            font-weight: 700;
+            font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            display: inline-block;
             text-decoration: none;
-            text-align: center;
+            display: inline-block;
+            border: none;
+            font-family: inherit;
         }
 
         .btn-primary {
             background: linear-gradient(135deg, var(--signal-green) 0%, #00cc6f 100%);
-            color: var(--darker-bg);
-            box-shadow: 0 10px 40px rgba(0, 255, 136, 0.2);
+            color: #050812;
+            font-weight: 700;
         }
 
         .btn-primary:hover {
             transform: translateY(-3px);
-            box-shadow: 0 15px 50px rgba(0, 255, 136, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
         }
 
         .btn-secondary {
             background: transparent;
-            color: var(--signal-green);
             border: 2px solid var(--signal-green);
+            color: var(--signal-green);
         }
 
         .btn-secondary:hover {
@@ -212,87 +208,73 @@
         }
 
         .signal-canvas-container {
-            position: relative;
-            height: 320px;
-            background: rgba(5, 8, 18, 0.8);
+            width: 100%;
+            height: 400px;
+            background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            position: relative;
             overflow: hidden;
-            animation: slideInRight 1s ease-out;
         }
 
         .signal-canvas {
             width: 100%;
             height: 100%;
+            display: block;
         }
 
-        @keyframes slideInLeft {
-            from { opacity: 0; transform: translateX(-50px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        @keyframes slideInRight {
-            from { opacity: 0; transform: translateX(50px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        /* Upload & Results Section */
+        /* Upload Section */
         .upload-section {
             padding: 6rem 2rem;
-            background: rgba(5, 8, 18, 0.6);
-            border-top: 1px solid var(--border-color);
+            position: relative;
+            z-index: 1;
         }
 
         .upload-container {
-            max-width: 1200px;
+            max-width: 900px;
             margin: 0 auto;
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 1rem;
             padding: 3rem;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
         }
 
         .drop-zone {
             border: 2px dashed var(--signal-green);
-            border-radius: 1rem;
-            padding: 4rem 2rem;
+            border-radius: 0.8rem;
+            padding: 3rem 2rem;
             text-align: center;
-            transition: all 0.3s ease;
             cursor: pointer;
-            background: rgba(10, 14, 39, 0.4);
+            transition: all 0.3s ease;
+            background: rgba(5, 8, 18, 0.4);
         }
 
         .drop-zone:hover {
             background: rgba(0, 255, 136, 0.05);
             border-color: var(--signal-blue);
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.1);
         }
 
         .drop-zone h3 {
             font-size: 1.5rem;
-            color: var(--text-primary);
             margin-bottom: 0.5rem;
+            color: var(--signal-green);
         }
 
-        .results-section {
-            padding: 4rem 2rem;
-            display: none;
-            background: rgba(5, 8, 18, 0.4);
-            border-top: 1px solid var(--border-color);
-        }
-
-        .plot-container img {
-            max-width: 100%;
-            border-radius: 0.8rem;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-
+        /* Operation Buttons */
         .operation-btns {
             display: flex;
+            gap: 1rem;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 1rem;
+        }
+
+        /* Results Section */
+        .results-section {
+            padding: 4rem 2rem 6rem;
+            display: none;
         }
 
         /* Features Section */
@@ -309,7 +291,7 @@
         }
 
         .section-title {
-            font-size: 3.5rem;
+            font-size: 3rem;
             font-weight: 800;
             margin-bottom: 1rem;
             text-align: center;
@@ -378,7 +360,7 @@
         }
 
         .feature-card h3 {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             margin-bottom: 1rem;
             color: var(--signal-green);
         }
@@ -386,6 +368,7 @@
         .feature-card p {
             color: var(--text-secondary);
             line-height: 1.8;
+            font-size: 0.95rem;
         }
 
         /* Specs Section */
@@ -449,34 +432,28 @@
             overflow: hidden;
         }
 
-        .mini-canvas canvas {
-            width: 100%;
-            height: 100%;
-        }
-
         /* Pricing Section */
         .pricing {
             padding: 6rem 2rem;
-            position: relative;
-            z-index: 1;
         }
 
         .pricing-container {
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 auto;
             text-align: center;
         }
 
         .price-box {
-            background: linear-gradient(135deg, rgba(0, 255, 136, 0.05) 0%, rgba(0, 212, 255, 0.05) 100%);
-            border: 2px solid var(--border-color);
-            padding: 3rem 2rem;
+            background: var(--card-bg);
+            border: 2px solid var(--signal-green);
             border-radius: 1rem;
-            margin: 3rem 0;
+            padding: 3rem 2rem;
+            margin-top: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 255, 136, 0.1);
         }
 
         .price-amount {
-            font-size: 4rem;
+            font-size: 3.5rem;
             font-weight: 800;
             color: var(--signal-green);
             margin-bottom: 0.5rem;
@@ -484,15 +461,16 @@
 
         .price-period {
             color: var(--text-secondary);
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
         }
 
         .price-description {
             color: var(--text-secondary);
-            font-size: 1rem;
-            margin-bottom: 2rem;
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
             line-height: 1.8;
+            font-size: 1rem;
         }
 
         .download-options {
@@ -510,6 +488,7 @@
             cursor: pointer;
             font-weight: 700;
             transition: all 0.3s ease;
+            font-family: inherit;
         }
 
         .download-btn:hover {
@@ -523,7 +502,7 @@
             text-align: center;
             border-top: 1px solid var(--border-color);
             color: var(--text-secondary);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             background: var(--darker-bg);
         }
 
@@ -550,7 +529,7 @@
 
             .nav-links {
                 gap: 1rem;
-                font-size: 0.85rem;
+                font-size: 0.9rem;
             }
 
             .hero {
@@ -561,7 +540,7 @@
             }
 
             .hero-text h1 {
-                font-size: 2.8rem;
+                font-size: 2.5rem;
             }
 
             .specs-container {
@@ -570,6 +549,10 @@
 
             .cta-group {
                 flex-direction: column;
+            }
+
+            .download-options {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -594,6 +577,29 @@
             transform: scale(1.08);
             box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
         }
+
+        .preset-btn {
+            background: rgba(15, 21, 53, 0.85);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.6rem 1.15rem;
+            border-radius: 24px;
+            font-size: 0.92rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            font-family: inherit;
+        }
+
+        .preset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 18px rgba(0, 255, 136, 0.25);
+            border-color: var(--signal-green);
+            color: #ffffff;
+        }
     </style>
 </head>
 <body>
@@ -601,19 +607,19 @@
     <header class="header-brand">
         <div class="header-left">
             <div>
-                <h1 class="leibnitz-name">Leibnitz 5.0</h1>
-                <p class="company-tag">Signal Processing</p>
+                <h1 class="leibnitz-name" title="Lāyabniṭza 5.0">लायब्निट्ज़ ५.०</h1>
+                <p class="company-tag" title="Saṅkētasaṁsādhanam">सङ्केतसंसाधनम्</p>
             </div>
         </div>
         <nav class="nav-links">
-            <a href="#features">Features</a>
-            <a href="#specs">Specs</a>
-            <a href="#pricing">Pricing</a>
+            <a href="#features" title="Vaiśiṣṭyāni">वैशिष्ट्यानि</a>
+            <a href="#specs" title="Tantrāṁśāḥ">तन्त्रांशाः</a>
+            <a href="#pricing" title="Mūlyam">मूल्यम्</a>
             {% if session.get('user') %}
-                <a href="/dashboard" style="color:var(--signal-blue);">Dashboard</a>
-                <a href="/logout">Logout</a>
+                <a href="/dashboard" style="color:var(--signal-blue);" title="Niyantraṇaphalakam">नियन्त्रणफलकम्</a>
+                <a href="/logout" title="Nirgamaḥ">निर्गमः</a>
             {% else %}
-                <a href="/login" style="color:var(--signal-green);">Login</a>
+                <a href="/login" style="color:var(--signal-green);" title="Pravēśaḥ">प्रवेशः</a>
             {% endif %}
         </nav>
     </header>
@@ -622,11 +628,13 @@
     <section class="hero">
         <div class="hero-content">
             <div class="hero-text">
-                <h1>Signal Processing Suite</h1>
-                <p>Professional-grade signal processing toolkit featuring FFT, advanced filtering, wavelet analysis, and a custom Semiclassical Fourier Transform (SFT) based on actual Schrödinger Equation evolution. Engineered for precision, optimized for performance.</p>
+                <h1 title="Saṅkētasaṁsādhana-saṅgrahaḥ">सङ्केतसंसाधनसङ्ग्रहः</h1>
+                <p title="Vyāvāsayika-śrēṇyāḥ saṅkētasaṁsādhana-sādhana-saṅgrahaḥ yatra druta-Phūryē-rūpāntaraṇam (FFT), unnata-śōdhakāḥ, vīcikā-viślēṣaṇam, tathā vāstavika-Śrōḍiṅgara-samīkaraṇa-vikāsa-ādhāritam ardha-śāstrīya-Phūryē-rūpāntaraṇam (SFT) upalabhyatē. Sūkṣmatāyai nirmitam, paramōcca-dakṣatāyai anukūlitam.">
+                    व्यावसायिकश्रेण्याः सङ्केतसंसाधनसाधनसङ्ग्रहः यत्र द्रुत-फूर्ये-रूपान्तरणम् (FFT), उन्नतशोधकाः, वीचिकाविश्लेषणम्, तथा वास्तविक-श्रोडिङ्गर-समीकरण-विकास-आधारितम् अर्धशास्त्रीय-फूर्ये-रूपान्तरणम् (SFT) उपलभ्यते। सूक्ष्मतायै निर्मितम्, परमोच्चदक्षतायै अनुकूलितम्।
+                </p>
                 <div class="cta-group">
-                    <button class="btn btn-primary" onclick="document.getElementById('upload-section').scrollIntoView({behavior:'smooth'})">Start Processing</button>
-                    <button class="btn btn-secondary" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">Learn More</button>
+                    <button class="btn btn-primary" onclick="document.getElementById('upload-section').scrollIntoView({behavior:'smooth'})" title="Saṁsādhanam ārabhatām">संसाधनमारभताम्</button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})" title="Adhikaṁ jñāyatām">अधिकं ज्ञायताम्</button>
                 </div>
             </div>
             <div class="signal-canvas-container">
@@ -638,79 +646,92 @@
     <!-- Upload Section -->
     <section class="upload-section" id="upload-section">
         <div class="upload-container">
-            <h2 style="text-align:center; margin-bottom:2rem; color:var(--signal-green);">Upload Your Signal</h2>
+            <h2 style="text-align:center; margin-bottom:2rem; color:var(--signal-green);" title="Svasya saṅkētaṁ samarpayantu">स्वस्य सङ्केतं समर्पयन्तु</h2>
             
-            <div class="drop-zone" id="dropZone">
-                <h3>Drop your signal file here</h3>
-                <p style="color:var(--text-secondary); margin:1rem 0;">Supported formats: .csv, .txt, .npy, .wav</p>
+            <div class="drop-zone" id="dropZone" title="Atra saṅkētasañcikāṁ nikṣipantu">
+                <h3 title="Atra saṅkētasañcikāṁ nikṣipantu">अत्र सङ्केतसञ्चिकां निक्षिपन्तु</h3>
+                <p style="color:var(--text-secondary); margin:1rem 0;" title="Samarthitāni rūpāṇi: .csv, .txt, .npy, .wav">समर्थितानि रूपाणि: .csv, .txt, .npy, .wav</p>
                 <input type="file" id="fileInput" style="display:none;" accept=".csv,.txt,.npy,.wav">
-                <button class="btn btn-secondary" onclick="event.stopPropagation(); document.getElementById('fileInput').click();">Browse Files</button>
+                <button class="btn btn-secondary" onclick="event.stopPropagation(); document.getElementById('fileInput').click();" title="Sañcikāḥ anviṣyantu">सञ्चिकाः अन्विष्यन्तु</button>
+            </div>
+
+            <!-- Demo Signal Presets -->
+            <div class="demo-presets-container" style="margin-top: 1.5rem; text-align: center;">
+                <p style="color: var(--text-secondary); font-size: 0.92rem; margin-bottom: 0.75rem;" title="Saṅkētasañcikā nāsti kim? Ētaiḥ pūrvasthāpitaiḥ saṅkētaiḥ sadyaḥ parīkṣadhvam:">
+                    💡 <em>सङ्केतसञ्चिका नास्ति किम्? एतैः पूर्वस्थापितैः सङ्केतैः सद्यः परीक्षध्वम्:</em>
+                </p>
+                <div style="display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap;">
+                    <button type="button" class="preset-btn" onclick="loadDemoSignal('sinusoid')" style="border-color: rgba(0, 255, 136, 0.4);" title="12 Hz Nādasaṁvādaḥ (Sinusoid)">
+                        <span style="color: var(--signal-green);">⚡</span> १२ हर्ट्ज़ नादसंवादः
+                    </button>
+                    <button type="button" class="preset-btn" onclick="loadDemoSignal('chirp')" style="border-color: rgba(0, 212, 255, 0.4);" title="Dhvani-cītkāra-prasāraḥ (Chirp)">
+                        <span style="color: var(--signal-blue);">🎵</span> ध्वनि-चीत्कार-प्रसारः
+                    </button>
+                    <button type="button" class="preset-btn" onclick="loadDemoSignal('ecg')" style="border-color: rgba(255, 51, 68, 0.4);" title="Kr̥trima-hr̥dlēkha-spandaḥ (ECG)">
+                        <span style="color: var(--signal-red);">💓</span> कृत्रिम-हृद्लेख-स्पन्दः
+                    </button>
+                </div>
             </div>
 
             <div id="fileInfo" style="margin-top:1.5rem; text-align:center; display:none;"></div>
 
             <!-- Signal Settings Container -->
             <div id="settingsContainer" style="margin-top: 2rem; display: none; background: rgba(5, 8, 18, 0.5); border: 1px solid var(--border-color); border-radius: 0.8rem; padding: 1.5rem; text-align: left;">
-                <h4 style="color: var(--signal-blue); margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
-                    ⚙️ Processing Parameters
+                <h4 style="color: var(--signal-blue); margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;" title="Saṁsādhana-māpadaṇḍāḥ">
+                    ⚙️ संसाधन-मापदण्डाः
                 </h4>
                 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
                     <!-- Global/Rate Settings -->
                     <div>
-                        <label for="paramSampleRate" style="display: block; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Sampling Rate (Hz)</label>
-                        <input type="number" id="paramSampleRate" value="1000" step="any" min="0.001" style="width: 100%; background: var(--darker-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.6rem; border-radius: 0.4rem; font-size: 0.95rem;">
-                        <span id="rateDetectionLabel" style="font-size: 0.75rem; color: var(--signal-green); display: none; margin-top: 0.25rem;">✔ Auto-detected from file</span>
+                        <label for="paramSampleRate" style="display: block; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem;" title="Praticayana-daraḥ (Hz)">प्रतिचयन-दरः (Hz)</label>
+                        <input type="number" id="paramSampleRate" value="1000" step="any" min="0.001" style="width: 100%; background: var(--darker-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.6rem; border-radius: 0.4rem; font-size: 0.95rem; font-family: inherit;">
+                        <span id="rateDetectionLabel" style="font-size: 0.8rem; color: var(--signal-green); display: none; margin-top: 0.25rem;" title="Sañcikātaḥ svataḥ abhijñātam">✔ सञ्चिकातः स्वतः अभिज्ञातम्</span>
                     </div>
 
                     <!-- FFT Settings -->
                     <div class="setting-group" data-op="fft">
-                        <label for="paramFftWindow" style="display: block; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">FFT Window Function</label>
-                        <select id="paramFftWindow" style="width: 100%; background: var(--darker-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.6rem; border-radius: 0.4rem; font-size: 0.95rem;">
-                            <option value="none">None (Rectangular)</option>
-                            <option value="hann" selected>Hann</option>
-                            <option value="hamming">Hamming</option>
-                            <option value="blackman">Blackman</option>
-                            <option value="bartlett">Bartlett</option>
+                        <label for="paramFftWindow" style="display: block; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem;" title="Druta-Phūryē vātāyana-phalanam">द्रुत-फूर्ये वातायन-फलनम्</label>
+                        <select id="paramFftWindow" style="width: 100%; background: var(--darker-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.6rem; border-radius: 0.4rem; font-size: 0.95rem; font-family: inherit;">
+                            <option value="none" title="Na kimapi (Āyatākāram)">न किमपि (आयताकारम्)</option>
+                            <option value="hann" selected title="Hānn">हान् (Hann)</option>
+                            <option value="hamming" title="Hyāmiṅg">ह्यामिङ्ग् (Hamming)</option>
+                            <option value="blackman" title="Blyākaman">ब्ल्याकमन् (Blackman)</option>
+                            <option value="bartlett" title="Bārṭlēṭ">बार्ट्लेट् (Bartlett)</option>
                         </select>
                     </div>
 
-                    <!-- IFFT Settings -->
-                    <div class="setting-group" data-op="ifft">
-                        
-                        
-                    </div>
-
-
+                    <!-- IFFT Settings placeholder -->
+                    <div class="setting-group" data-op="ifft"></div>
 
                     <!-- Filter Settings -->
                     <div class="setting-group" data-op="filter" style="display: grid; grid-template-columns: 1fr; gap: 1rem; grid-column: span 2;">
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1rem;">
                             <div>
-                                <label for="paramFilterKind" style="display: block; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Filter Type</label>
-                                <select id="paramFilterKind" onchange="toggleFilterCutoffHelp()" style="width: 100%; background: var(--darker-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.6rem; border-radius: 0.4rem; font-size: 0.95rem;">
-                                    <option value="lowpass" selected>Low-pass</option>
-                                    <option value="highpass">High-pass</option>
-                                    <option value="bandpass">Band-pass</option>
-                                    <option value="bandstop">Band-stop</option>
+                                <label for="paramFilterKind" style="display: block; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem;" title="Śōdhaka-prakāraḥ">शोधक-प्रकारः</label>
+                                <select id="paramFilterKind" onchange="toggleFilterCutoffHelp()" style="width: 100%; background: var(--darker-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.6rem; border-radius: 0.4rem; font-size: 0.95rem; font-family: inherit;">
+                                    <option value="lowpass" selected title="Nimnagāmi (Low-pass)">निम्नगामि (Low-pass)</option>
+                                    <option value="highpass" title="Uccagāmi (High-pass)">उच्चगामि (High-pass)</option>
+                                    <option value="bandpass" title="Paṭṭikāgāmi (Band-pass)">पट्टिकागामि (Band-pass)</option>
+                                    <option value="bandstop" title="Paṭṭikārōdhaka (Band-stop)">पट्टिकारोधक (Band-stop)</option>
                                 </select>
                             </div>
                             <div>
-                                <label for="paramFilterCutoff" style="display: block; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Cutoff Frequency (Hz)</label>
-                                <input type="text" id="paramFilterCutoff" value="100" style="width: 100%; background: var(--darker-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.6rem; border-radius: 0.4rem; font-size: 0.95rem;">
-                                <span id="cutoffHelp" style="font-size: 0.75rem; color: var(--text-secondary); display: block; margin-top: 0.25rem;">e.g., 100</span>
+                                <label for="paramFilterCutoff" style="display: block; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem;" title="Antaka-āvr̥ttiḥ (Hz)">अन्तक-आवृत्तिः (Hz)</label>
+                                <input type="text" id="paramFilterCutoff" value="100" style="width: 100%; background: var(--darker-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.6rem; border-radius: 0.4rem; font-size: 0.95rem; font-family: inherit;">
+                                <span id="cutoffHelp" style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-top: 0.25rem;" title="Udāharaṇam: 100">उदा. १००</span>
                             </div>
                             <div>
-                                <label for="paramFilterMethod" style="display: block; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Method</label>
-                                <select id="paramFilterMethod" style="width: 100%; background: var(--darker-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.6rem; border-radius: 0.4rem; font-size: 0.95rem;">
-                                    <option value="butter" selected>Butterworth (IIR)</option>
-                                    <option value="cheby1">Chebyshev I (IIR)</option>
-                                    <option value="fir">Windowed (FIR)</option>
+                                <label for="paramFilterMethod" style="display: block; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem;" title="Śōdhana-vidhiḥ">शोधन-विधिः</label>
+                                <select id="paramFilterMethod" style="width: 100%; background: var(--darker-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.6rem; border-radius: 0.4rem; font-size: 0.95rem; font-family: inherit;">
+                                    <option value="butter" selected title="Baṭarvart (IIR)">बटर्वर्त् (Butterworth IIR)</option>
+                                    <option value="cheby1" title="Cēbiśēv 1 (IIR)">चेबिशेव् १ (Chebyshev I)</option>
+                                    <option value="fir" title="Vātāyanayuktam (FIR)">वातायनयुक्तम् (Windowed FIR)</option>
                                 </select>
                             </div>
                             <div>
-                                <label for="paramFilterOrder" style="display: block; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Filter Order</label>
-                                <input type="number" id="paramFilterOrder" value="4" min="1" max="100" style="width: 100%; background: var(--darker-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.6rem; border-radius: 0.4rem; font-size: 0.95rem;">
+                                <label for="paramFilterOrder" style="display: block; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem;" title="Śōdhaka-kramaḥ">शोधक-क्रमः</label>
+                                <input type="number" id="paramFilterOrder" value="4" min="1" max="100" style="width: 100%; background: var(--darker-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.6rem; border-radius: 0.4rem; font-size: 0.95rem; font-family: inherit;">
                             </div>
                         </div>
                     </div>
@@ -718,66 +739,66 @@
                     <!-- Wavelet Settings -->
                     <div class="setting-group" data-op="wavelet" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; grid-column: span 2;">
                         <div>
-                            <label for="paramWaveletType" style="display: block; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Wavelet Family</label>
-                            <select id="paramWaveletType" style="width: 100%; background: var(--darker-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.6rem; border-radius: 0.4rem; font-size: 0.95rem;">
-                                <option value="db4" selected>Daubechies 4 (db4)</option>
-                                <option value="db2">Daubechies 2 (db2)</option>
-                                <option value="haar">Haar</option>
-                                <option value="sym2">Symlets 2 (sym2)</option>
-                                <option value="coif1">Coiflets 1 (coif1)</option>
+                            <label for="paramWaveletType" style="display: block; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem;" title="Vīcikā-kulam">वीचिका-कुलम्</label>
+                            <select id="paramWaveletType" style="width: 100%; background: var(--darker-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.6rem; border-radius: 0.4rem; font-size: 0.95rem; font-family: inherit;">
+                                <option value="db4" selected title="Ḍōbēśī 4 (db4)">डोबेशी ४ (db4)</option>
+                                <option value="db2" title="Ḍōbēśī 2 (db2)">डोबेशी २ (db2)</option>
+                                <option value="haar" title="Hār (haar)">हार् (haar)</option>
+                                <option value="sym2" title="Simlēṭ 2 (sym2)">सिम्लेट् २ (sym2)</option>
+                                <option value="coif1" title="Kōiphlēṭ 1 (coif1)">कोइफ्लेट् १ (coif1)</option>
                             </select>
                         </div>
                         <div>
-                            <label for="paramWaveletLevels" style="display: block; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Decomposition Levels</label>
-                            <input type="number" id="paramWaveletLevels" value="3" min="1" max="10" style="width: 100%; background: var(--darker-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.6rem; border-radius: 0.4rem; font-size: 0.95rem;">
+                            <label for="paramWaveletLevels" style="display: block; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem;" title="Vighaṭana-starāḥ">विघटन-स्तराः</label>
+                            <input type="number" id="paramWaveletLevels" value="3" min="1" max="10" style="width: 100%; background: var(--darker-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.6rem; border-radius: 0.4rem; font-size: 0.95rem; font-family: inherit;">
                         </div>
                     </div>
 
                     <!-- Semiclassical FT Settings -->
                     <div class="setting-group" data-op="sft" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; grid-column: span 2; border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 0.5rem;">
                         <div>
-                            <label for="paramSftAlpha" style="display: block; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">SFT Alpha (Interpolation)</label>
-                            <input type="number" id="paramSftAlpha" value="0.5" step="0.05" min="0.0" max="1.0" style="width: 100%; background: var(--darker-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.6rem; border-radius: 0.4rem; font-size: 0.95rem;">
+                            <label for="paramSftAlpha" style="display: block; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem;" title="Ardha-śāstrīya Ālphā (Antaḥpravēśanam)">अर्धशास्त्रीय आल्फा (α)</label>
+                            <input type="number" id="paramSftAlpha" value="0.5" step="0.05" min="0.0" max="1.0" style="width: 100%; background: var(--darker-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.6rem; border-radius: 0.4rem; font-size: 0.95rem; font-family: inherit;">
                         </div>
                         <div>
-                            <label for="paramSftSteps" style="display: block; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Evolution Steps</label>
-                            <input type="number" id="paramSftSteps" value="50" min="5" max="500" style="width: 100%; background: var(--darker-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.6rem; border-radius: 0.4rem; font-size: 0.95rem;">
+                            <label for="paramSftSteps" style="display: block; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem;" title="Vikāsa-sōpānāni">विकास-सोपानानि</label>
+                            <input type="number" id="paramSftSteps" value="50" min="5" max="500" style="width: 100%; background: var(--darker-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.6rem; border-radius: 0.4rem; font-size: 0.95rem; font-family: inherit;">
                         </div>
                         <div>
-                            <label for="paramSftDt" style="display: block; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Time Step (dt)</label>
-                            <input type="number" id="paramSftDt" value="0.1" step="0.01" min="0.001" max="10.0" style="width: 100%; background: var(--darker-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.6rem; border-radius: 0.4rem; font-size: 0.95rem;">
+                            <label for="paramSftDt" style="display: block; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem;" title="Kāla-sōpānam (dt)">काल-सोपानम् (dt)</label>
+                            <input type="number" id="paramSftDt" value="0.1" step="0.01" min="0.001" max="10.0" style="width: 100%; background: var(--darker-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.6rem; border-radius: 0.4rem; font-size: 0.95rem; font-family: inherit;">
                         </div>
                         <div>
-                            <label for="paramSftPotential" style="display: block; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Potential (κ)</label>
-                            <input type="number" id="paramSftPotential" value="0.001" step="0.0001" min="0.0" max="1.0" style="width: 100%; background: var(--darker-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.6rem; border-radius: 0.4rem; font-size: 0.95rem;">
+                            <label for="paramSftPotential" style="display: block; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem;" title="Vibhavaḥ (κ)">विभवः (κ)</label>
+                            <input type="number" id="paramSftPotential" value="0.001" step="0.0001" min="0.0" max="1.0" style="width: 100%; background: var(--darker-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.6rem; border-radius: 0.4rem; font-size: 0.95rem; font-family: inherit;">
                         </div>
                         <div>
-                            <label for="paramSftInteraction" style="display: block; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Interaction (g)</label>
-                            <input type="number" id="paramSftInteraction" value="0.1" step="0.05" min="-10.0" max="10.0" style="width: 100%; background: var(--darker-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.6rem; border-radius: 0.4rem; font-size: 0.95rem;">
+                            <label for="paramSftInteraction" style="display: block; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem;" title="Mithaḥkriyā (g)">मिथःक्रिया (g)</label>
+                            <input type="number" id="paramSftInteraction" value="0.1" step="0.05" min="-10.0" max="10.0" style="width: 100%; background: var(--darker-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.6rem; border-radius: 0.4rem; font-size: 0.95rem; font-family: inherit;">
                         </div>
                         <div>
-                            <label for="paramSftParticleType" style="display: block; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Particle Type</label>
-                            <select id="paramSftParticleType" style="width: 100%; background: var(--darker-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.6rem; border-radius: 0.4rem; font-size: 0.95rem;">
-                                <option value="distinguishable" selected>Distinguishable</option>
-                                <option value="bosons">Bosons (Symmetric)</option>
-                                <option value="fermions">Fermions (Anti-symmetric)</option>
+                            <label for="paramSftParticleType" style="display: block; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem;" title="Kaṇa-prakāraḥ">कण-प्रकारः</label>
+                            <select id="paramSftParticleType" style="width: 100%; background: var(--darker-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.6rem; border-radius: 0.4rem; font-size: 0.95rem; font-family: inherit;">
+                                <option value="distinguishable" selected title="Vibhēdyāḥ (Distinguishable)">विभेद्याः</option>
+                                <option value="bosons" title="Bōsōna-kaṇāḥ (Bosons)">बोसोन-कणाः (सममितम्)</option>
+                                <option value="fermions" title="Pharmiōna-kaṇāḥ (Fermions)">फर्मिओन-कणाः (विषममितम्)</option>
                             </select>
                         </div>
                         <div>
-                            <label for="paramSftGridSize" style="display: block; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Grid Size (M)</label>
-                            <input type="number" id="paramSftGridSize" value="32" min="8" max="64" style="width: 100%; background: var(--darker-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.6rem; border-radius: 0.4rem; font-size: 0.95rem;">
+                            <label for="paramSftGridSize" style="display: block; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem;" title="Jālaka-parimāṇam (M)">जालक-परिमाणम् (M)</label>
+                            <input type="number" id="paramSftGridSize" value="32" min="8" max="64" style="width: 100%; background: var(--darker-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.6rem; border-radius: 0.4rem; font-size: 0.95rem; font-family: inherit;">
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="operation-btns" style="text-align:center; margin:2.5rem 0; display:none;" id="operationBtns">
-                <button class="btn btn-primary" onclick="processSignal('fft')">FFT Analysis</button>
-		<button class="btn btn-primary" onclick="processSignal('ifft')">IFFT Analysis</button>
-                <button class="btn btn-primary" onclick="processSignal('filter')">Apply Filter</button>
-                <button class="btn btn-primary" onclick="processSignal('wavelet')">Wavelet Transform</button>
-                <button class="btn btn-primary" onclick="processSignal('davincitron')">DavinciTron Generator</button>
-                <button class="btn btn-primary" onclick="processSignal('sft')" style="background: linear-gradient(135deg, var(--accent-gold) 0%, #b8860b 100%); color: var(--darker-bg); box-shadow: 0 10px 40px rgba(255, 215, 0, 0.25); border: none;">Semiclassical FT</button>
+                <button class="btn btn-primary" onclick="processSignal('fft')" title="Druta-Phūryē-viślēṣaṇam">द्रुत-फूर्ये-विश्लेषणम् (FFT)</button>
+		<button class="btn btn-primary" onclick="processSignal('ifft')" title="Pratilōma-druta-Phūryē-viślēṣaṇam">प्रतिलोम-द्रुत-फूर्ये (IFFT)</button>
+                <button class="btn btn-primary" onclick="processSignal('filter')" title="Śōdhaka-prayōgaḥ">शोधकप्रयोगः</button>
+                <button class="btn btn-primary" onclick="processSignal('wavelet')" title="Vīcikā-rūpāntaraṇam">वीचिकारूपान्तरणम्</button>
+                <button class="btn btn-primary" onclick="processSignal('davincitron')" title="Ḍāviñcīṭrān-kalājanakaḥ">डाविञ्चीट्रान्-कलाजनकः</button>
+                <button class="btn btn-primary" onclick="processSignal('sft')" style="background: linear-gradient(135deg, var(--accent-gold) 0%, #b8860b 100%); color: var(--darker-bg); box-shadow: 0 10px 40px rgba(255, 215, 0, 0.25); border: none;" title="Ardha-śāstrīya-Phūryē-rūpāntaraṇam">अर्धशास्त्रीय-फूर्ये (SFT)</button>
             </div>
         </div>
     </section>
@@ -785,11 +806,11 @@
     <!-- Results Section -->
     <section class="results-section" id="resultsSection">
         <div class="upload-container">
-            <h2 style="color:var(--signal-green); margin-bottom:1.5rem; text-align:center;">Processing Results</h2>
+            <h2 style="color:var(--signal-green); margin-bottom:1.5rem; text-align:center;" title="Saṁsādhana-pariṇāmāḥ">संसाधन-परिणामाः</h2>
             <div id="resultContent"></div>
             
             <div style="text-align:center; margin-top:3rem;">
-                <button class="btn btn-secondary" onclick="resetUpload()">Process Another Signal</button>
+                <button class="btn btn-secondary" onclick="resetUpload()" title="Aparā sañcikā saṁsādhyatām">अपरा सञ्चिका संसाध्यताम्</button>
             </div>
         </div>
     </section>
@@ -797,38 +818,38 @@
     <!-- Features Section -->
     <section class="features" id="features">
         <div class="features-container">
-            <h2 class="section-title">Core Features</h2>
-            <p class="section-subtitle">Advanced signal analysis and processing capabilities</p>
+            <h2 class="section-title" title="Pramukhāṇi vaiśiṣṭyāni">प्रमुखाणि वैशिष्ट्यानि</h2>
+            <p class="section-subtitle" title="Unnataṁ saṅkētaviślēṣaṇaṁ saṁsādhanakṣamatā ca">उन्नतं सङ्केतविश्लेषणं संसाधनक्षमता च</p>
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">⚡</div>
-                    <h3>FFT Implementation</h3>
-                    <p>High-performance Fast Fourier Transform for real-time frequency domain analysis with optimized algorithms.</p>
+                    <h3 title="Druta-Phūryē-rūpāntaraṇam">द्रुत-फूर्ये-रूपान्तरणम् (FFT)</h3>
+                    <p title="Anukūlita-kalanavidhibhiḥ saha tātkālika-āvr̥ttikṣētrīya-viślēṣaṇārtham ucca-dakṣatā-yuktaṁ druta-Phūryē-rūpāntaraṇam.">अनुकूलित-कलनविधिभिः सह तात्कालिक-आवृत्तिक्षेत्रीय-विश्लेषणार्थम् उच्चदक्षतायुक्तं द्रुत-फूर्ये-रूपान्तरणम्।</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">🔧</div>
-                    <h3>IIR/FIR Filters</h3>
-                    <p>Infinite and Finite Impulse Response filters with customizable parameters for precision signal conditioning.</p>
+                    <h3 title="IIR/FIR Śōdhakāḥ">IIR/FIR शोधकाः</h3>
+                    <p title="Yathārtha-saṅkēta-saṁskaraṇāya svēcchānukūla-māpadaṇḍaiḥ yuktāḥ ananta-parimita-spandapratisāda-śōdhakāḥ.">यथार्थसङ्केतसंस्करणाय स्वेच्छानुकूल-मापदण्डैः युक्ताः अनन्त-परिमित-स्पन्दप्रतिसाद-शोधकाः।</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">〰️</div>
-                    <h3>Wavelet Transform</h3>
-                    <p>Advanced wavelet analysis for time-frequency decomposition and multi-scale signal processing.</p>
+                    <h3 title="Vīcikā-rūpāntaraṇam">वीचिकारूपान्तरणम्</h3>
+                    <p title="Kāla-āvr̥tti-vighaṭanāya bahustarīya-saṅkētasaṁsādhanāya ca samunnataṁ vīcikāviślēṣaṇam.">काल-आवृत्ति-विघटनाय बहुस्तरीय-सङ्केतसंसाधनाय च समुन्नतं वीचिकाविश्लेषणम्।</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">⚛️</div>
-                    <h3>Semiclassical Fourier Transform</h3>
-                    <p>Transition from quantum wavefunctions to classical measurement limits using actual Schrödinger Equation evolution with projective and modulative quantum operators.</p>
+                    <h3 title="Ardha-śāstrīya-Phūryē-rūpāntaraṇam">अर्धशास्त्रीय-फूर्ये-रूपान्तरणम्</h3>
+                    <p title="Prakṣēpya-vikārya-pramātra-pracālakaiḥ saha vāstavika-Śrōḍiṅgara-samīkaraṇa-vikāsēna pramātra-taraṅgaphalanāt śāstrīya-māpanasīmāsu saṅkramaṇam.">प्रक्षेप्य-विकार्य-प्रमात्र-प्रचालकैः सह वास्तविक-श्रोडिङ्गर-समीकरण-विकासेन प्रमात्र-तरङ्गफलनात् शास्त्रीय-मापनसीमासु सङ्क्रमणम्।</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">⚙️</div>
-                    <h3>Real-time Processing</h3>
-                    <p>Stream processing capabilities with minimal latency for live signal analysis and monitoring.</p>
+                    <h3 title="Tātkālika-saṁsādhanam">तात्कालिक-संसाधनम्</h3>
+                    <p title="Sajīva-saṅkētaviślēṣaṇāya nirīkṣaṇāya ca nyūnatama-vilambata-yuktā dhārāpravāhī-saṁsādhanakṣamatā.">सजीव-सङ्केतविश्लेषणाय निरीक्षणाय च न्यूनतम-विलम्बतायुक्ता धाराप्रवाही-संसाधनक्षमता।</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">🎨</div>
-                    <h3>DavinciTron Generative Art</h3>
-                    <p>Generate unique, creative nested-heuristic canvases seeded directly by the waveforms and characteristics of your uploaded signal.</p>
+                    <h3 title="Ḍāviñcīṭrān-kalājanakaḥ">डाविञ्चीट्रान्-कलाजनकः</h3>
+                    <p title="Bhavataḥ ārōpitānāṁ taraṅgarūpāṇāṁ vaiśiṣṭyānāṁ ca ādhārēṇa sr̥janātmaka-citraphalakānāṁ nirmāṇam.">भवतः आरोपितानां तरङ्गरूपाणां वैशिष्ट्यानां च आधारेण सृजनात्मक-चित्रफलकानां निर्माणम्।</p>
                 </div>
             </div>
         </div>
@@ -838,37 +859,36 @@
     <section class="specs" id="specs">
         <div class="specs-container">
             <div>
-                <h2 class="section-title" style="text-align: left; margin-bottom: 2rem;">Technical Specifications</h2>
+                <h2 class="section-title" style="text-align: left; margin-bottom: 2rem;" title="Tāntrika-viśēṣāṁśāḥ">तान्त्रिक-विशेषांशाः</h2>
                 <div class="specs-list">
                     <div class="spec-item">
                         <span class="spec-check">✓</span>
                         <div>
-                            <h4>Sampling Rate Support</h4>
-                            <p>Up to 1 MHz sampling frequency with full precision</p>
+                            <h4 title="Praticayana-dara-samarthanam">प्रतिचयन-दर-समर्थनम्</h4>
+                            <p title="Pūrṇa-yathārthatayā saha 1 MHz āvr̥ttiṁ yāvat">पूर्णयथार्थतया सह १ MHz आवृत्तिं यावत्</p>
                         </div>
                     </div>
                     <div class="spec-item">
                         <span class="spec-check">✓</span>
                         <div>
-                            <h4>Filter Orders</h4>
-                            <p>Support for filter orders up to 512 taps</p>
+                            <h4 title="Śōdhaka-kramāḥ">शोधक-क्रमाः</h4>
+                            <p title="512 paryantaṁ śōdhakakrama-samarthanam">५१२ पर्यन्तं शोधकक्रमसमर्थनम्</p>
                         </div>
                     </div>
                     <div class="spec-item">
                         <span class="spec-check">✓</span>
                         <div>
-                            <h4>FFT Points</h4>
-                            <p>2^4 to 2^20 point FFT transformations</p>
+                            <h4 title="Druta-Phūryē bindavaḥ">द्रुत-फूर्ये बिन्दवः (FFT Points)</h4>
+                            <p title="2^4 taḥ 2^20 bindu-rūpāntaraṇāni">२^४ तः २^२० बिन्दु-रूपान्तरणानि</p>
                         </div>
                     </div>
                     <div class="spec-item">
                         <span class="spec-check">✓</span>
                         <div>
-                            <h4>Data Formats</h4>
-                            <p>Float32, Float64, and fixed-point representations</p>
+                            <h4 title="Dattāṁśa-rūpāṇi">दत्तांश-रूपाणि</h4>
+                            <p title="Float32, Float64, tathā sthirabindu-pratinidhitvam">Float32, Float64, तथा स्थिरबिन्दु-प्रतिनिधित्वम्</p>
                         </div>
                     </div>
-                    
                 </div>
             </div>
             <div class="visualization-dual">
@@ -885,17 +905,17 @@
     <!-- Pricing Section -->
     <section class="pricing" id="pricing">
         <div class="pricing-container">
-            <h2 class="section-title">Pricing for Download</h2>
-            <p class="section-subtitle">One-time purchase, lifetime access</p>
+            <h2 class="section-title" title="Avatāraṇāya mūlyam">अवतारणाय मूल्यम्</h2>
+            <p class="section-subtitle" title="Ēkavāraṁ krayaṇam, ājīvanaṁ pravēśaḥ">एकवारं क्रयणम्, आजीवनं प्रवेशः</p>
             <div class="price-box">
-                <div class="price-amount">USD 19</div>
-                <div class="price-period">One-time License</div>
-                <div class="price-description">
-                    Complete Signal Processing Suite with all features, lifetime access, and free updates.
+                <div class="price-amount" title="19 USD / 1500 INR">$१९ / ₹१५००</div>
+                <div class="price-period" title="Ēkavārānumatipatram">एकवारानुमतिपत्रम्</div>
+                <div class="price-description" title="Samagraiḥ vaiśiṣṭyaiḥ saha sampūrṇaḥ saṅkētasaṁsādhana-saṅgrahaḥ, ājīvana-pravēśaḥ, niḥśulka-navīkaraṇāni ca.">
+                    समग्रैः वैशिष्ट्यैः सह सम्पूर्णः सङ्केतसंसाधनसङ्ग्रहः, आजीवनप्रवेशः, निःशुल्क-नवीकरणानि च।
                 </div>
                 <div class="download-options">
-                    <a href="https://realinstitute.netlify.app/checkout.html?add-to-cart=Leibnitz%20Signal%20Processing%20Suite%20%28Python%20Source%29&price=1500" class="download-btn" style="text-decoration: none; text-align: center; display: block;">Buy .py Source (₹1500 / $19)</a>
-                    <a href="https://realinstitute.netlify.app/checkout.html?add-to-cart=Leibnitz%20Signal%20Processing%20Suite%20%28Full%20Zip%29&price=1500" class="download-btn" style="text-decoration: none; text-align: center; display: block;">Buy .zip Package (₹1500 / $19)</a>
+                    <a href="https://realinstitute.netlify.app/checkout.html?add-to-cart=Leibnitz%20Signal%20Processing%20Suite%20%28Python%20Source%29&price=1500" class="download-btn" style="text-decoration: none; text-align: center; display: block;" title="Python mūlasaṅkētaṁ krīṇātu (₹1500 / $19)">पायथन् मूलसङ्केतं क्रीणातु (₹१५०० / $१९)</a>
+                    <a href="https://realinstitute.netlify.app/checkout.html?add-to-cart=Leibnitz%20Signal%20Processing%20Suite%20%28Full%20Zip%29&price=1500" class="download-btn" style="text-decoration: none; text-align: center; display: block;" title="Saṅkucita-sañcikāṁ (.zip) krīṇātu (₹1500 / $19)">सङ्कुचित-सञ्चिकां (.zip) क्रीणातु (₹१५०० / $१९)</a>
                 </div>
             </div>
         </div>
@@ -903,7 +923,7 @@
 
     <!-- Footer -->
     <footer>
-        <p>&copy; 2026 Leibnitz Signal Processing Inc. | Professional Signal Analysis Tools by <a href="https://realinstitute.netlify.app" target="_blank">REAL</a></p>
+        <p title="© 2026 Lāyabniṭza Saṅkētasaṁsādhana-saṁsthā | REAL dvārā nirmitāni vyāvāsayika-saṅkētaviślēṣaṇasādhanāni">&copy; २०२६ लायब्निट्ज़ सङ्केतसंसाधनसंस्था | <a href="https://realinstitute.netlify.app" target="_blank" title="REAL - Research and Engineering Advanced Laboratory">REAL</a> द्वारा निर्मितानि व्यावसायिक-सङ्केतविश्लेषणसाधनानि</p>
     </footer>
 
     <script>
@@ -1101,10 +1121,54 @@
             const kind = document.getElementById('paramFilterKind').value;
             const help = document.getElementById('cutoffHelp');
             if (kind === 'bandpass' || kind === 'bandstop') {
-                help.innerText = 'e.g., 50, 150 (two values)';
+                help.innerText = 'उदा. ५०, १५० (द्वौ मूल्याङ्कौ)';
+                help.setAttribute('title', 'Udāharaṇam: 50, 150 (dvau mūlyāṅkau)');
             } else {
-                help.innerText = 'e.g., 100 (single value)';
+                help.innerText = 'उदा. १०० (एकं मूल्यम्)';
+                help.setAttribute('title', 'Udāharaṇam: 100 (ēkaṁ mūlyam)');
             }
+        }
+
+        function loadDemoSignal(type) {
+            fileInfo.innerHTML = `<span style="color:var(--signal-blue); font-size:0.95rem;" title="Nidarśana-saṅkētaḥ sajjaḥ kriyatē...">⏳ निदर्शन-सङ्केतः सज्जः क्रियते (${type})...</span>`;
+            fileInfo.style.display = 'block';
+
+            fetch(`/api/demo-signal/${type}`)
+            .then(res => {
+                if (!res.ok) throw new Error("Failed to load demo signal");
+                return res.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    currentFilename = data.filename;
+                    fileInfo.innerHTML = `
+                        <div style="display:inline-flex; align-items:center; gap:0.6rem; background:rgba(0, 255, 136, 0.12); border:1px solid var(--signal-green); padding:0.45rem 1.2rem; border-radius:24px;">
+                            <span style="color:var(--signal-green); font-weight:700;" title="Sakriyam nidarśanam">✔ सक्रियं निदर्शनम्:</span> 
+                            <strong style="color:#ffffff;">${data.original_name}</strong> 
+                            <span style="color:var(--text-secondary); font-size:0.85rem;">— ${data.description}</span>
+                        </div>
+                    `;
+                    fileInfo.style.display = 'block';
+                    operationBtns.style.display = 'block';
+                    document.getElementById('settingsContainer').style.display = 'block';
+
+                    if (data.detected_sample_rate) {
+                        document.getElementById('paramSampleRate').value = data.detected_sample_rate;
+                        const rateLabel = document.getElementById('rateDetectionLabel');
+                        rateLabel.innerText = `✔ पूर्वस्थापित-दरः: ${data.detected_sample_rate} Hz`;
+                        rateLabel.setAttribute('title', `Pūrvasthāpita-daraḥ: ${data.detected_sample_rate} Hz`);
+                        rateLabel.style.display = 'inline-block';
+                    }
+
+                    document.getElementById('settingsContainer').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                } else {
+                    alert("निदर्शनसङ्केताहरणे दोषः: " + (data.error || 'अज्ञातदोषः'));
+                }
+            })
+            .catch(err => {
+                console.error("Demo load error:", err);
+                alert("निदर्शनसङ्केताहरणं विफलम्। कृपया पुनः प्रयतताम्।");
+            });
         }
 
         function handleFile(file) {
@@ -1124,12 +1188,12 @@
             })
             .then(res => {
                 if (res.status === 401) {
-                    alert("Please sign in first to upload and process signals.");
+                    alert("सङ्केतसञ्चिकामारोपितुं संसाधितुं च कृपया प्रथमतः प्रविशन्तु।");
                     window.location.href = "/login";
                     throw new Error("Unauthorized");
                 }
                 if (res.status === 402) {
-                    alert("Usage limit reached. Redirecting to payment page...");
+                    alert("प्रयोगसीमा समाप्ता। शुल्कशोधनपृष्ठं प्रति नीयते...");
                     window.location.href = "/payment";
                     throw new Error("Payment Required");
                 }
@@ -1144,7 +1208,7 @@
                         document.getElementById('rateDetectionLabel').style.display = 'inline-block';
                     }
                 } else {
-                    alert("Upload failed: " + data.error);
+                    alert("आरोपणे विफलता: " + data.error);
                 }
             })
             .catch(err => console.error(err));
@@ -1152,7 +1216,7 @@
 
         function processSignal(operation) {
             if (!currentFilename) {
-                alert("Please upload a file first");
+                alert("कृपया प्रथमतः सञ्चिकामारोपयन्तु");
                 return;
             }
 
@@ -1197,12 +1261,12 @@
             })
             .then(res => {
                 if (res.status === 401) {
-                    alert("Please sign in first.");
+                    alert("कृपया प्रथमतः प्रविशन्तु।");
                     window.location.href = "/login";
                     throw new Error("Unauthorized");
                 }
                 if (res.status === 402) {
-                    alert("Usage limit reached. Redirecting to payment page...");
+                    alert("प्रयोगसीमा समाप्ता। शुल्कशोधनपृष्ठं प्रति नीयते...");
                     window.location.href = "/payment";
                     throw new Error("Payment Required");
                 }
@@ -1212,43 +1276,57 @@
                 if (data.success) {
                     showResults(data);
                 } else {
-                    alert("Processing error: " + data.error);
+                    alert("संसाधने त्रुटिः: " + data.error);
                 }
             })
             .catch(err => console.error(err));
         }
 
+        const operationTitlesSanskrit = {
+            'fft': { dev: 'द्रुत-फूर्ये-विश्लेषणस्य (FFT) परिणामाः', lat: 'Druta-Phūryē-viślēṣaṇasya pariṇāmāḥ' },
+            'ifft': { dev: 'प्रतिलोम-द्रुत-फूर्ये-विश्लेषणस्य (IFFT) परिणामाः', lat: 'Pratilōma-druta-Phūryē-viślēṣaṇasya pariṇāmāḥ' },
+            'filter': { dev: 'शोधक-संसाधनस्य परिणामाः', lat: 'Śōdhaka-saṁsādhanasya pariṇāmāḥ' },
+            'wavelet': { dev: 'वीचिका-रूपान्तरणस्य परिणामाः', lat: 'Vīcikā-rūpāntaraṇasya pariṇāmāḥ' },
+            'davincitron': { dev: 'डाविञ्चीट्रान्-कलाजनकस्य परिणामाः', lat: 'Ḍāviñcīṭrān-kalājanakasya pariṇāmāḥ' },
+            'sft': { dev: 'अर्धशास्त्रीय-फूर्ये-रूपान्तरणस्य (SFT) परिणामाः', lat: 'Ardha-śāstrīya-Phūryē-rūpāntaraṇasya pariṇāmāḥ' }
+        };
+
         function showResults(data) {
             const resultsDiv = document.getElementById('resultsSection');
             const content = document.getElementById('resultContent');
 
-            let html = `<h3 style="color:var(--signal-blue); margin-bottom: 1.5rem; text-align: center;">${data.operation.toUpperCase()} Results</h3>`;
+            const opTitle = operationTitlesSanskrit[data.operation] || { 
+                dev: `${data.operation.toUpperCase()} परिणामाः`, 
+                lat: `${data.operation.toUpperCase()} Pariṇāmāḥ` 
+            };
+
+            let html = `<h3 style="color:var(--signal-blue); margin-bottom: 1.5rem; text-align: center;" title="${opTitle.lat}">${opTitle.dev}</h3>`;
 
             if (data.plot_url) {
                 html += `
                     <div class="plot-container" style="margin:2rem auto; text-align: center; max-width: 900px;">
-                        <img src="${data.plot_url}" alt="Processing Plot" style="width: 100%; height: auto;">
+                        <img src="${data.plot_url}" alt="संसाधन-चित्रीकरणम्" title="Saṁsādhana-citrīkaraṇam" style="width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--border-color);">
                     </div>
                 `;
             }
 
             if (data.operation === 'sft' && data.result) {
                 html += `
-                    <div class="sft-summary-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; max-width: 900px; margin: 1.5rem auto; text-align: left; font-family: sans-serif;">
-                        <div class="sft-card" style="background: rgba(15, 21, 53, 0.6); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: 0.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border-left: 4px solid #ffd700;">
-                            <div style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">Proj SFT Fidelity (Mean)</div>
+                    <div class="sft-summary-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; max-width: 900px; margin: 1.5rem auto; text-align: left;">
+                        <div class="sft-card" style="background: rgba(15, 21, 53, 0.6); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: 0.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border-left: 4px solid #ffd700;" title="Prakṣēpa SFT viśvasanīyatā (Mādhyam)">
+                            <div style="font-size: 0.82rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">प्रक्षेप SFT विश्वसनीयता (माध्यम्)</div>
                             <div style="font-size: 1.6rem; color: #ffd700; font-weight: bold; margin-top: 0.25rem;">${(data.result.mean_fidelity_proj * 100).toFixed(2)}%</div>
                         </div>
-                        <div class="sft-card" style="background: rgba(15, 21, 53, 0.6); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: 0.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border-left: 4px solid #ffd700;">
-                            <div style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">Proj SFT Fidelity (Final)</div>
+                        <div class="sft-card" style="background: rgba(15, 21, 53, 0.6); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: 0.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border-left: 4px solid #ffd700;" title="Prakṣēpa SFT viśvasanīyatā (Antimam)">
+                            <div style="font-size: 0.82rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">प्रक्षेप SFT विश्वसनीयता (अन्तिमम्)</div>
                             <div style="font-size: 1.6rem; color: #ffd700; font-weight: bold; margin-top: 0.25rem;">${(data.result.final_fidelity_proj * 100).toFixed(2)}%</div>
                         </div>
-                        <div class="sft-card" style="background: rgba(15, 21, 53, 0.6); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: 0.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border-left: 4px solid #00d4ff;">
-                            <div style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">Mod SFT Fidelity (Mean)</div>
+                        <div class="sft-card" style="background: rgba(15, 21, 53, 0.6); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: 0.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border-left: 4px solid #00d4ff;" title="Vikāra SFT viśvasanīyatā (Mādhyam)">
+                            <div style="font-size: 0.82rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">विकार SFT विश्वसनीयता (माध्यम्)</div>
                             <div style="font-size: 1.6rem; color: #00d4ff; font-weight: bold; margin-top: 0.25rem;">${(data.result.mean_fidelity_mod * 100).toFixed(2)}%</div>
                         </div>
-                        <div class="sft-card" style="background: rgba(15, 21, 53, 0.6); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: 0.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border-left: 4px solid #00d4ff;">
-                            <div style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">Mod SFT Fidelity (Final)</div>
+                        <div class="sft-card" style="background: rgba(15, 21, 53, 0.6); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: 0.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border-left: 4px solid #00d4ff;" title="Vikāra SFT viśvasanīyatā (Antimam)">
+                            <div style="font-size: 0.82rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">विकार SFT विश्वसनीयता (अन्तिमम्)</div>
                             <div style="font-size: 1.6rem; color: #00d4ff; font-weight: bold; margin-top: 0.25rem;">${(data.result.final_fidelity_mod * 100).toFixed(2)}%</div>
                         </div>
                     </div>
@@ -1272,27 +1350,27 @@
                 const hexHash = "QSH-" + Math.abs(hashValue).toString(16).toUpperCase() + "-" + Math.abs(hashValue * 31).toString(16).substring(0, 4).toUpperCase();
 
                 html += `
-                    <div class="crypto-demo-panel" style="background: rgba(10, 14, 39, 0.95); border: 2px solid var(--accent-gold); border-radius: 0.75rem; padding: 2rem; max-width: 900px; margin: 2.5rem auto; text-align: left; box-shadow: 0 8px 32px rgba(218, 165, 32, 0.15); font-family: sans-serif; position: relative; overflow: hidden;">
+                    <div class="crypto-demo-panel" style="background: rgba(10, 14, 39, 0.95); border: 2px solid var(--accent-gold); border-radius: 0.75rem; padding: 2rem; max-width: 900px; margin: 2.5rem auto; text-align: left; box-shadow: 0 8px 32px rgba(218, 165, 32, 0.15); position: relative; overflow: hidden;">
                         <div style="position: absolute; top: -10px; right: -10px; font-size: 5rem; color: rgba(218, 165, 32, 0.05); font-weight: bold; pointer-events: none; user-select: none;">HASH</div>
-                        <h4 style="color: var(--accent-gold); margin: 0 0 1rem 0; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem; border-bottom: 1px solid rgba(218, 165, 32, 0.2); padding-bottom: 0.75rem;">
+                        <h4 style="color: var(--accent-gold); margin: 0 0 1rem 0; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem; border-bottom: 1px solid rgba(218, 165, 32, 0.2); padding-bottom: 0.75rem;" title="Upayōga-nidarśanam: Pramātrādhārita-gūḍhalēkhana-haiśīkaraṇaṁ bhautika-bījārōpaṇaṁ ca">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 0.25rem;">
                                 <path d="M8 1a2 2 0 0 1 2 2v2H6V3a2 2 0 0 1 2-2zm3 4V3a3 3 0 0 0-6 0v2H2a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-3zM2 6h12a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/>
                             </svg>
-                            Use Case Demo: Quantum-Inspired Cryptographic Hashing & Physical Seeding
+                            उपयोग-निदर्शनम्: प्रमात्राधारित-गूढलेखन-हैशीकरणं भौतिक-बीजारोपणं च
                         </h4>
-                        <p style="color: var(--text-primary); font-size: 0.95rem; line-height: 1.5; margin-bottom: 1.5rem;">
-                            By mapping your input dataset into the joint 2-particle coordinate space and simulating decoherence, the system tracks a sequence of chaotic measurement collapse coordinates. Because this trajectory is highly sensitive to initial conditions, it creates a deterministic, non-invertible cryptographic hash of your dataset.
+                        <p style="color: var(--text-primary); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem;" title="Praviṣṭāṁ dattāṁśamālāṁ saṁyukta-dvikaṇa-nirdēśāṅkasthānē nikṣipya kṣaya-anukaraṇēna praṇālyā saṁpātī-māpananirdēśāṅkānāṁ śr̥ṅkhalā anugamyatē. Prārambhikadaśāsu asyāḥ pravr̥ttēḥ atīva-saṁvēdanaśīlatvāt ēṣā dattāṁśasya acalām, apratilōmyāṁ gūḍhalēkhana-haiś-saṁhitāṁ janayati.">
+                            प्रविष्टां दत्तांशमालां संयुक्त-द्विकण-निर्देशाङ्कस्थाने निक्षिप्य क्षय-अनुकरणेन प्रणाल्या संपाती-मापननिर्देशाङ्कानां शृङ्खला अनुगम्यते। प्रारम्भिकदशासु अस्याः प्रवृत्तेः अतीव-संवेदनशीलत्वात् एषा दत्तांशस्य अचलाम्, अप्रतिलोम्यां गूढलेखन-हैश-संहितां जनयति।
                         </p>
                         
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
                             <div style="background: rgba(15, 21, 53, 0.6); border: 1px solid var(--border-color); padding: 1rem; border-radius: 0.5rem;">
-                                <div style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Entropy Trajectory (Last 5 Collapse Pairs)</div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;" title="Entrŏpī-pathaḥ (Antima-pañca-saṁpātāḥ)">एन्ट्रॉपी-पथः (अन्तिम-पञ्च-संपाताः)</div>
                                 <code style="color: var(--signal-green); font-family: monospace; font-size: 0.9rem; display: block; word-break: break-all;">
-                                    ${collapseHistory.slice(-5).map(pair => `[${pair[0]}, ${pair[1]}]`).join(' → ') || 'No collapse data'}
+                                    ${collapseHistory.slice(-5).map(pair => `[${pair[0]}, ${pair[1]}]`).join(' → ') || 'न कोऽपि संपाती दत्तांशः'}
                                 </code>
                             </div>
                             <div style="background: rgba(15, 21, 53, 0.6); border: 1px solid var(--border-color); padding: 1rem; border-radius: 0.5rem;">
-                                <div style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Generated Quantum-Semiclassical Hash (QSH)</div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;" title="Janitā Pramātra-ardhaśāstrīya-haiśa-saṁhitā (QSH)">जनिता प्रमात्र-अर्धशास्त्रीय-हैश-संहिता (QSH)</div>
                                 <code style="color: var(--accent-gold); font-family: monospace; font-size: 1.1rem; font-weight: bold; letter-spacing: 0.05em; display: block; word-break: break-all;">
                                     ${hexHash}
                                 </code>
@@ -1300,19 +1378,41 @@
                         </div>
 
                         <div style="border-top: 1px solid var(--border-color); padding-top: 1.25rem;">
-                            <h5 style="color: var(--text-primary); margin: 0 0 0.5rem 0; font-size: 0.95rem; font-weight: bold;">How to use this result in your application:</h5>
-                            <ol style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.6; margin: 0; padding-left: 1.2rem;">
-                                <li><strong>Deterministic Integrity Verification:</strong> Run this SFT block with your dataset and static parameters (same seed, grid size, and interaction $g$). If the dataset is altered by even one bit, the collapse trajectory changes instantly, producing a completely different QSH.</li>
-                                <li><strong>Physical Randomness Seeding:</strong> Use the sequence of collapse coordinate pairs as highly uncorrelated entropy seeds for Monte Carlo simulations or cryptographic key generators.</li>
+                            <h5 style="color: var(--text-primary); margin: 0 0 0.5rem 0; font-size: 1rem; font-weight: bold;" title="Svakīyē anuprayōgē asya pariṇāmasya upayōgavidhiḥ:">स्वकीये अनुप्रयोगे अस्य परिणामस्य उपयोगविधिः:</h5>
+                            <ol style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; margin: 0; padding-left: 1.2rem;">
+                                <li><strong title="Acala-akhaṇḍatā-satyāpanam">अचल-अखण्डता-सत्यापनम्:</strong> अस्य SFT खण्डस्य प्रयोगं स्वदत्तांशेन स्थिरमापदण्डैश्च चालयन्तु। यदि दत्तांशे एकोऽपि बिन्दुः परिवर्तते, तर्हि संपातपथः सद्यः परिवर्तितो भूत्वा भिन्नं QSH जनयति।</li>
+                                <li><strong title="Bhautika-yādr̥cchikatā-bījanam">भौतिक-यादृच्छिकता-बीजनम्:</strong> संपाती-निर्देशाङ्कयुग्मानां शृङ्खलाम् उच्चासहसम्बद्ध-एन्ट्रॉपी-बीजरूपेण मोण्टे-कार्लो-अनुकरणाय गूढलेखनकुञ्चिकाजननाय वा उपयुञ्जन्तु।</li>
                             </ol>
                         </div>
                     </div>
                 `;
             }
 
+            if (data.download_url) {
+                html += `
+                    <div class="download-action-bar" style="display: flex; justify-content: center; gap: 1rem; margin: 2rem auto; max-width: 900px; flex-wrap: wrap;">
+                        <a href="${data.download_url}" download class="download-btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.85rem 1.6rem; border-radius: 0.5rem; font-size: 0.95rem;" title="Sañcikā avatāryatām">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                            </svg>
+                            📥 ${data.download_label || 'संसाधितः सङ्केतः (.csv)'} अवतार्यताम्
+                        </a>
+                        ${data.report_url ? `
+                        <a href="${data.report_url}" download class="download-btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.85rem 1.6rem; border-radius: 0.5rem; font-size: 0.95rem; border-color: var(--signal-blue); color: var(--signal-blue); background: rgba(0, 212, 255, 0.1);" title="Viślēṣaṇa-vivaraṇaṁ niryātyatām (.json)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z"/>
+                            </svg>
+                            📄 विश्लेषण-विवरणम् निर्यात्यताम् (.json)
+                        </a>
+                        ` : ''}
+                    </div>
+                `;
+            }
+
             html += `
                 <div class="data-dump-container" style="position: relative; max-width: 900px; margin: 0 auto;">
-                    <button class="copy-btn" onclick="copyDataDump(this)" title="Copy to Clipboard">
+                    <button class="copy-btn" onclick="copyDataDump(this)" title="Phalakē pratilikhyatām (Copy to Clipboard)">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="vertical-align: middle;">
                           <path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V2Zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H6ZM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1H2Z"/>
                         </svg>
@@ -1372,8 +1472,8 @@
                 currentFilename = fileParam;
                 
                 // Show file info
-                const sizeKb = sizeParam ? (parseFloat(sizeParam)/1024).toFixed(1) : "unknown";
-                fileInfo.innerHTML = `<strong>${nameParam}</strong> (${sizeKb} KB) <span style="color: var(--signal-blue); font-size: 0.9rem; margin-left: 0.5rem;">[Uploaded from Dashboard]</span>`;
+                const sizeKb = sizeParam ? (parseFloat(sizeParam)/1024).toFixed(1) : "अज्ञातम्";
+                fileInfo.innerHTML = `<strong>${nameParam}</strong> (${sizeKb} KB) <span style="color: var(--signal-blue); font-size: 0.9rem; margin-left: 0.5rem;" title="Niyantraṇaphalakāt āropitam">[नियन्त्रणफलकात् आरोपितम्]</span>`;
                 fileInfo.style.display = 'block';
                 operationBtns.style.display = 'block';
                 document.getElementById('settingsContainer').style.display = 'block';

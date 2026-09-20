@@ -10,12 +10,16 @@ import os
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
+matplotlib.rcParams['font.family'] = 'sans-serif'
+matplotlib.rcParams['font.sans-serif'] = ['Noto Sans Devanagari', 'Nirmala UI', 'Sanskrit Text', 'DejaVu Sans', 'Arial']
+matplotlib.rcParams['axes.unicode_minus'] = False
 import matplotlib.pyplot as plt
 from scipy import signal
 import uuid
 from datetime import datetime, timedelta
 import json
 import re
+import shutil
 
 # Import Signal Processing Suite
 from SignalProcessingSuite.blocks import get_block, list_blocks, timed_run
@@ -209,6 +213,16 @@ def mark_user_paid(username, utr=None):
 
 def has_unlimited_access():
     return bool(session.get('is_paid')) or is_paid_user(session.get('user'))
+
+def ensure_session_user():
+    """Ensure a user exists in the session. If not, instantiate an anonymous guest user."""
+    if 'user' not in session or not session.get('user'):
+        guest_user = f"guest_{uuid.uuid4().hex[:8]}"
+        add_user(guest_user, "guest")
+        session['user'] = guest_user
+        session['is_paid'] = False
+        session['usage_count'] = 0
+    return session['user']
 
 # ====================== File Metadata Database (PostgreSQL) ======================
 
@@ -486,15 +500,15 @@ def login():
             confirm_password = request.form.get('confirm_password')
             
             if not username_val or not password:
-                flash('Username and password are required.', 'error')
+                flash('प्रयोक्तानाम गुप्तशब्दश्च उभावपि आवश्यकौ। (Prayōktr̥-nāma gupta-śabdaśca ubhāvapi āvaśyakau.)', 'error')
                 return render_template('login.html', active_tab='register', username=username_val)
                 
             if password != confirm_password:
-                flash('Passwords do not match.', 'error')
+                flash('गुप्तशब्दौ न समेते। (Gupta-śabdau na samētē.)', 'error')
                 return render_template('login.html', active_tab='register', username=username_val)
                 
             if get_user_password(username_val) is not None:
-                flash('Username already exists.', 'error')
+                flash('प्रयोक्तानाम पूर्वमेव विद्यते। (Prayōktr̥-nāma pūrvamēva vidyatē.)', 'error')
                 return render_template('login.html', active_tab='register', username=username_val)
                 
             add_user(username_val, password)
@@ -503,7 +517,7 @@ def login():
             session.permanent = True
             session['user'] = username_val
             session['is_paid'] = False
-            flash('Registration successful! Welcome to Leibnitz.', 'success')
+            flash('पञ्जीकरणं सफलम्! लायब्निट्ज़-मध्ये स्वागतम्। (Pañjīkaraṇaṁ saphalam! Lāyabniṭza-madhyē svāgatam.)', 'success')
             return redirect(url_for('dashboard'))
             
         else:  # action == 'login'
@@ -514,10 +528,10 @@ def login():
                 session.permanent = True
                 session['user'] = username_val
                 session['is_paid'] = is_paid_user(username_val)
-                flash('Login successful!', 'success')
+                flash('प्रवेशः सफलः! (Pravēśaḥ saphalaḥ!)', 'success')
                 return redirect(url_for('dashboard'))
             else:
-                flash('Invalid credentials.', 'error')
+                flash('अवैधानि प्रमाणपत्राणि। (Avaidhāni pramāṇapatrāṇi.)', 'error')
                 return render_template('login.html', active_tab='login', username=username_val)
                 
     return render_template('login.html', active_tab=active_tab, username=username_val)
@@ -568,17 +582,94 @@ def confirm_payment():
     return jsonify({
         "success": True,
         "unlimited_access": True,
-        "message": "Payment confirmed! Unlimited access unlocked."
+        "message": "शुल्कशोधनं प्रमाणीकृतम्! असीमितप्रवेशः उद्घाटितः। (Śulkaśōdhanaṁ pramāṇīkr̥tam! Asīmita-pravēśaḥ udghāṭitaḥ.)"
     })
 
 @app.route('/api/blocks', methods=['GET'])
 def available_blocks():
     return jsonify({"blocks": list_blocks()})
 
+@app.route('/api/demo-signal/<preset_type>', methods=['GET'])
+def get_demo_signal(preset_type):
+    try:
+        user = ensure_session_user()
+        preset_type = (preset_type or '').lower().strip()
+        uid = uuid.uuid4().hex[:8]
+
+        if preset_type == 'sinusoid':
+            original_name = "sinusoidal_12Hz.csv"
+            filename = f"demo_sinusoid_12Hz_{uid}.csv"
+            source_file = os.path.join(BASE_DIR, 'sinusoidal_12Hz.csv')
+            target_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            if os.path.exists(source_file):
+                shutil.copyfile(source_file, target_file)
+            else:
+                sample_rate = 1000.0
+                t = np.linspace(0, 1.0, 1000, endpoint=False)
+                sig = np.sin(2 * np.pi * 12.0 * t) + 0.25 * np.sin(2 * np.pi * 60.0 * t)
+                np.savetxt(target_file, np.column_stack((t, sig)), delimiter=',', header='Time (s),Signal', comments='')
+            
+            detected_rate = 1000.0
+            description = "१२ हर्ट्ज़ नादसंवादः ध्वनिप्रदूषणेन सह (12 Hz Sinusoid with harmonics & noise)"
+
+        elif preset_type == 'chirp':
+            original_name = "frequency_chirp_10-200Hz.csv"
+            filename = f"demo_chirp_{uid}.csv"
+            target_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            
+            sample_rate = 1000.0
+            duration = 1.0
+            t = np.linspace(0, duration, int(sample_rate * duration), endpoint=False)
+            sig = np.sin(2 * np.pi * (10.0 + (200.0 - 10.0) * t / (2 * duration)) * t)
+            sig += 0.04 * np.random.normal(0, 1, len(t))
+            np.savetxt(target_file, np.column_stack((t, sig)), delimiter=',', header='Time (s),Signal', comments='')
+            
+            detected_rate = 1000.0
+            description = "रैखिक-आवृत्ति-चीत्कार-प्रसारः (१० Hz → २०० Hz) (Linear frequency sweep 10-200 Hz)"
+
+        elif preset_type == 'ecg':
+            original_name = "synthetic_ecg_trace.csv"
+            filename = f"demo_ecg_{uid}.csv"
+            target_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            
+            sample_rate = 500.0
+            duration = 2.0
+            t = np.linspace(0, duration, int(sample_rate * duration), endpoint=False)
+            period = 1.0 / 1.2
+            phase = np.mod(t, period)
+            
+            p_wave = 0.15 * np.exp(-((phase - 0.20) ** 2) / (2 * (0.025 ** 2)))
+            q_wave = -0.15 * np.exp(-((phase - 0.27) ** 2) / (2 * (0.012 ** 2)))
+            r_wave = 1.20 * np.exp(-((phase - 0.30) ** 2) / (2 * (0.015 ** 2)))
+            s_wave = -0.30 * np.exp(-((phase - 0.34) ** 2) / (2 * (0.015 ** 2)))
+            t_wave = 0.30 * np.exp(-((phase - 0.48) ** 2) / (2 * (0.045 ** 2)))
+            
+            baseline = 0.08 * np.sin(2 * np.pi * 0.25 * t)
+            noise = 0.02 * np.random.normal(0, 1, len(t))
+            ecg_sig = p_wave + q_wave + r_wave + s_wave + t_wave + baseline + noise
+            np.savetxt(target_file, np.column_stack((t, ecg_sig)), delimiter=',', header='Time (s),Signal', comments='')
+            
+            detected_rate = 500.0
+            description = "कृत्रिम-हृद्लेख-स्पन्दः (५०० Hz) (Synthetic Cardiac ECG Trace 500 Hz)"
+        else:
+            return jsonify({"error": f"अज्ञातं निदर्शनम् '{preset_type}'"}), 400
+
+        add_file_metadata(filename, original_name, user)
+
+        return jsonify({
+            "success": True,
+            "filename": filename,
+            "original_name": original_name,
+            "detected_sample_rate": detected_rate,
+            "description": description,
+            "message": f"निदर्शनसङ्केतः स्थापितः: {description}"
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/api/upload', methods=['POST'])
 def upload_file():
-    if 'user' not in session:
-        return jsonify({"error": "Unauthorized"}), 401
+    user = ensure_session_user()
 
     if not has_unlimited_access() and session.get('usage_count', 0) >= 50:
         return jsonify({"error": "Usage limit reached", "redirect": "/payment"}), 402
@@ -609,7 +700,7 @@ def upload_file():
         return jsonify({
             "success": True,
             "filename": filename,
-            "message": "File uploaded successfully",
+            "message": "सञ्चिका सफ़लतया आरोपिता (Sañcikā saphalatayā ārōpitā)",
             "detected_sample_rate": detected_rate,
             "usage_count": session.get('usage_count', 0)
         })
@@ -631,8 +722,7 @@ def get_recent_files():
 
 @app.route('/api/process', methods=['POST'])
 def process_signal():
-    if 'user' not in session:
-        return jsonify({"error": "Unauthorized"}), 401
+    user = ensure_session_user()
 
     if not has_unlimited_access() and session.get('usage_count', 0) >= 50:
         return jsonify({"error": "Usage limit reached", "redirect": "/payment"}), 402
@@ -689,7 +779,34 @@ def process_signal():
         if not has_unlimited_access():
             session['usage_count'] = session.get('usage_count', 0) + 1
 
-        output_id = str(uuid.uuid4())
+        # Generate downloadable CSV of the processed / filtered signal or spectrum data
+        processed_csv_filename = f"processed_{first_result.get('id', 'signal')}_{uuid.uuid4().hex[:8]}.csv"
+        processed_csv_path = os.path.join(app.config['PROCESSED_FOLDER'], processed_csv_filename)
+
+        if first_result.get('id') == 'fft' and isinstance(last_result.get('result'), dict) and 'frequencies' in last_result['result']:
+            freqs = np.array(last_result['result']['frequencies'])
+            mags = np.array(last_result['result'].get('magnitude', last_result['result'].get('magnitudes', [])))
+            min_len = min(len(freqs), len(mags))
+            export_data = np.column_stack((freqs[:min_len], mags[:min_len]))
+            np.savetxt(processed_csv_path, export_data, delimiter=',', header='Frequency (Hz),Magnitude', comments='')
+            download_label = "वर्णक्रमदत्तांशः (.csv)"
+        else:
+            time_axis = np.arange(len(current_signal)) / float(sample_rate)
+            export_data = np.column_stack((time_axis, current_signal))
+            np.savetxt(processed_csv_path, export_data, delimiter=',', header='Time (s),Signal', comments='')
+            download_label = "संसाधितः सङ्केतः (.csv)"
+
+        report_json_filename = f"report_{first_result.get('id', 'summary')}_{uuid.uuid4().hex[:8]}.json"
+        report_json_path = os.path.join(app.config['PROCESSED_FOLDER'], report_json_filename)
+        with open(report_json_path, 'w') as f:
+            json.dump({
+                "operation": first_result.get("id"),
+                "sample_rate": sample_rate,
+                "timestamp": datetime.utcnow().isoformat(),
+                "result": last_result.get("result"),
+                "pipeline": pipeline_results
+            }, f, indent=2, default=str)
+
         return jsonify({
             "success": True,
             "operation": first_result.get("id"),
@@ -697,7 +814,9 @@ def process_signal():
             "plot_url": last_result.get("plot_url"),
             "pipeline": pipeline_results,
             "sample_rate": sample_rate,
-            "download_url": f"/api/download/{output_id}",
+            "download_url": f"/api/download/{processed_csv_filename}",
+            "download_label": download_label,
+            "report_url": f"/api/download/{report_json_filename}",
             "usage_count": session.get('usage_count', 0)
         })
 
@@ -742,10 +861,14 @@ def generate_suite_plot(original_filename, operation, original_signal, result_da
         ax1.set_facecolor('#0a0e27')
         ax2.set_facecolor('#0a0e27')
         
-        plot_time(original_signal[:1000], sample_rate=sample_rate, ax=ax1, title="Time Domain Signal")
+        plot_time(original_signal[:1000], sample_rate=sample_rate, ax=ax1, title="समयक्षेत्रसङ्केतः (Time Domain)")
+        ax1.set_xlabel("कालः (s)", color='#b0b8cc')
+        ax1.set_ylabel("आयामः", color='#b0b8cc')
         ax1.get_lines()[0].set_color('#00ff88')
         
-        plot_frequency(original_signal, sample_rate=sample_rate, ax=ax2, db=False, title="Frequency Spectrum (FFT)")
+        plot_frequency(original_signal, sample_rate=sample_rate, ax=ax2, db=False, title="आवृत्तिवर्णक्रमः (द्रुत-फूर्ये FFT)")
+        ax2.set_xlabel("आवृत्तिः (Hz)", color='#b0b8cc')
+        ax2.set_ylabel("परिमाणम्", color='#b0b8cc')
         ax2.get_lines()[0].set_color('#00d4ff')
         ax2.set_xlim(0, sample_rate / 2.0)
 
@@ -755,9 +878,9 @@ def generate_suite_plot(original_filename, operation, original_signal, result_da
         ax1.set_facecolor('#0a0e27')
         ax2.set_facecolor('#0a0e27')
         
-       
-        
-        plot_frequency(original_signal, sample_rate=sample_rate, ax=ax1, db=False, title="Frequency Spectrum (FFT)")
+        plot_frequency(original_signal, sample_rate=sample_rate, ax=ax1, db=False, title="आवृत्तिवर्णक्रमः (द्रुत-फूर्ये FFT)")
+        ax1.set_xlabel("आवृत्तिः (Hz)", color='#b0b8cc')
+        ax1.set_ylabel("परिमाणम्", color='#b0b8cc')
         ax1.get_lines()[0].set_color('#00d4ff')
         ax1.set_xlim(0, sample_rate / 2.0)
 
@@ -766,28 +889,24 @@ def generate_suite_plot(original_filename, operation, original_signal, result_da
             sample_rate=sample_rate,
             ax=ax2,
             db=False,
-            title="Time Domain IFFT"
+            title="समयक्षेत्रे प्रतिलोम-द्रुत-फूर्ये (IFFT)"
         )
+        ax2.set_xlabel("प्रतिचयन-क्रमाङ्कः", color='#b0b8cc')
+        ax2.set_ylabel("आयामः", color='#b0b8cc')
 
         lines = ax2.get_lines()
-
         if lines:
             lines[0].set_color('#00d4ff')
 
         ax2.set_xlim(0, 1000)
-        # plot_ifft(signal, sample_rate=sample_rate, ax=ax2, db= False, title= "Time Domain IFFT")
-        # ax2.get_lines()[0].set_color('#00d4ff')
-        # ax2.set_xlim(0, 1000)
-
-
 
     elif operation == 'filter':
         times = np.arange(min(len(original_signal), 1000)) / sample_rate
-        ax.plot(times, original_signal[:1000], label='Original', alpha=0.7, color='#ff3344')
-        ax.plot(times, result_data['filtered'][:1000], label='Filtered', color='#00ff88')
-        ax.set_title('Low-Pass Filtered Signal')
-        ax.set_xlabel('Time (s)')
-        ax.set_ylabel('Amplitude')
+        ax.plot(times, original_signal[:1000], label='मूलसङ्केतः', alpha=0.7, color='#ff3344')
+        ax.plot(times, result_data['filtered'][:1000], label='शोधितसङ्केतः', color='#00ff88')
+        ax.set_title('निम्नगामि-शोधितसङ्केतः (Filtered Signal)')
+        ax.set_xlabel('कालः (s)')
+        ax.set_ylabel('आयामः')
         ax.legend()
         ax.grid(True, alpha=0.3)
 
@@ -798,6 +917,9 @@ def generate_suite_plot(original_filename, operation, original_signal, result_da
         
         coeffs = result_data['_coeffs_obj']
         plot_wavelet_coefficients(coeffs, ax=ax1)
+        ax1.set_title("वीचिका-गुणाङ्काः (Wavelet Coefficients)")
+        ax1.set_xlabel("गुणाङ्क-निर्देशाङ्कः")
+        ax1.set_ylabel("प्रसामान्यीकृत-स्तरः")
         ax1.grid(True, alpha=0.3)
 
     elif operation == 'sft':
@@ -835,9 +957,9 @@ def generate_suite_plot(original_filename, operation, original_signal, result_da
                 col = colors[color_idx % len(colors)]
                 ax1.plot(P_t, label=f"t = {t_val:.2f}", color=col, alpha=0.8)
                 color_idx += 1
-        ax1.set_title("Schrödinger Position Wavefunction Evolution", color='#ffffff', fontsize=11, pad=8)
-        ax1.set_xlabel("Position Coordinate (x)", color='#b0b8cc', fontsize=9)
-        ax1.set_ylabel("Probability Density", color='#b0b8cc', fontsize=9)
+        ax1.set_title("श्रोडिङ्गर-स्थान-तरङ्गफलन-विकासः", color='#ffffff', fontsize=11, pad=8)
+        ax1.set_xlabel("स्थान-निर्देशाङ्कः (x)", color='#b0b8cc', fontsize=9)
+        ax1.set_ylabel("सम्भाव्यता-सान्द्रता", color='#b0b8cc', fontsize=9)
         ax1.legend(loc="upper right", facecolor='#0f1535', edgecolor='#1a2847', fontsize=8)
         ax1.grid(True, alpha=0.1)
         ax1.tick_params(colors='#b0b8cc', labelsize=8)
@@ -846,32 +968,32 @@ def generate_suite_plot(original_filename, operation, original_signal, result_da
         im = ax2.imshow(operator_matrix_mag, cmap='inferno', extent=[0, N, 0, N], origin='lower')
         cbar = fig.colorbar(im, ax=ax2, shrink=0.8)
         cbar.ax.yaxis.set_tick_params(color='#b0b8cc', labelsize=8)
-        cbar.ax.set_ylabel('Operator Matrix Magnitude |P_sc[j,k]|', color='#b0b8cc', rotation=270, labelpad=15, fontsize=8)
-        ax2.set_title("Semiclassical Operator Density Matrix $|P_{sc}|$", color='#ffffff', fontsize=11, pad=8)
-        ax2.set_xlabel("State Index (k)", color='#b0b8cc', fontsize=9)
-        ax2.set_ylabel("State Index (j)", color='#b0b8cc', fontsize=9)
+        cbar.ax.set_ylabel('प्रचालक-व्यूह-परिमाणम् |P_sc[j,k]|', color='#b0b8cc', rotation=270, labelpad=15, fontsize=8)
+        ax2.set_title("अर्धशास्त्रीय-प्रचालक-सान्द्रता-व्यूहः $|P_{sc}|$", color='#ffffff', fontsize=11, pad=8)
+        ax2.set_xlabel("अवस्था-निर्देशाङ्कः (k)", color='#b0b8cc', fontsize=9)
+        ax2.set_ylabel("अवस्था-निर्देशाङ्कः (j)", color='#b0b8cc', fontsize=9)
         ax2.tick_params(colors='#b0b8cc', labelsize=8)
 
         # Plot 3: Frequency-domain Fourier probabilities comparison
-        ax3.plot(freqs, final_P_FT, label="Quantum FT (QFT)", color='#00ff88', linewidth=2)
+        ax3.plot(freqs, final_P_FT, label="प्रमात्र-फूर्ये (QFT)", color='#00ff88', linewidth=2)
         ax3.fill_between(freqs, final_P_FT, alpha=0.1, color='#00ff88')
-        ax3.plot(freqs, final_P_proj_FT, label=f"Proj SFT (alpha={alpha})", color='#ffd700', linewidth=1.5)
-        ax3.plot(freqs, final_P_mod_FT, label=f"Mod SFT", color='#00d4ff', linewidth=1.2, linestyle=':')
-        ax3.plot(freqs, final_P_col_FT, label="Classical Collapsed DFT", color='#ff3344', linestyle='--', alpha=0.7, linewidth=1.2)
-        ax3.set_title("Frequency-Domain Fourier Probabilities", color='#ffffff', fontsize=11, pad=8)
-        ax3.set_xlabel("Frequency (Hz)", color='#b0b8cc', fontsize=9)
-        ax3.set_ylabel("Probability Density", color='#b0b8cc', fontsize=9)
+        ax3.plot(freqs, final_P_proj_FT, label=f"प्रक्षेप-SFT (α={alpha})", color='#ffd700', linewidth=1.5)
+        ax3.plot(freqs, final_P_mod_FT, label="विकार-SFT", color='#00d4ff', linewidth=1.2, linestyle=':')
+        ax3.plot(freqs, final_P_col_FT, label="शास्त्रीय-संपाती-DFT", color='#ff3344', linestyle='--', alpha=0.7, linewidth=1.2)
+        ax3.set_title("आवृत्तिक्षेत्रीय-फूर्ये-सम्भाव्यताः", color='#ffffff', fontsize=11, pad=8)
+        ax3.set_xlabel("आवृत्तिः (Hz)", color='#b0b8cc', fontsize=9)
+        ax3.set_ylabel("सम्भाव्यता-सान्द्रता", color='#b0b8cc', fontsize=9)
         ax3.legend(loc="upper right", facecolor='#0f1535', edgecolor='#1a2847', fontsize=8)
         ax3.grid(True, alpha=0.1)
         ax3.tick_params(colors='#b0b8cc', labelsize=8)
 
         # Plot 4: Spectral Fidelities over Time Steps
         time_axis = np.arange(1, len(fidelity_proj_history) + 1) * dt
-        ax4.plot(time_axis, fidelity_proj_history, color='#ffd700', marker='.', linewidth=1.5, label="Projective SFT Fidelity")
-        ax4.plot(time_axis, fidelity_mod_history, color='#00d4ff', marker='x', linewidth=1.2, label="Modulative SFT Fidelity", alpha=0.8)
-        ax4.set_title("Spectral Fidelity Over Time Evolution", color='#ffffff', fontsize=11, pad=8)
-        ax4.set_xlabel("Time (s)", color='#b0b8cc', fontsize=9)
-        ax4.set_ylabel("Spectral Fidelity", color='#b0b8cc', fontsize=9)
+        ax4.plot(time_axis, fidelity_proj_history, color='#ffd700', marker='.', linewidth=1.5, label="प्रक्षेप-SFT विश्वसनीयता")
+        ax4.plot(time_axis, fidelity_mod_history, color='#00d4ff', marker='x', linewidth=1.2, label="विकार-SFT विश्वसनीयता", alpha=0.8)
+        ax4.set_title("कालविकासे वर्णक्रम-विश्वसनीयता", color='#ffffff', fontsize=11, pad=8)
+        ax4.set_xlabel("कालः (s)", color='#b0b8cc', fontsize=9)
+        ax4.set_ylabel("वर्णक्रम-विश्वसनीयता", color='#b0b8cc', fontsize=9)
         ax4.set_ylim(-0.05, 1.05)
         ax4.grid(True, alpha=0.1)
         ax4.legend(loc="lower right", facecolor='#0f1535', edgecolor='#1a2847', fontsize=8)
@@ -880,7 +1002,9 @@ def generate_suite_plot(original_filename, operation, original_signal, result_da
     else:
         times = np.arange(min(len(original_signal), 1000)) / sample_rate
         ax.plot(times, original_signal[:1000], color='#ffd700')
-        ax.set_title('Signal Visualization')
+        ax.set_title('सङ्केत-चित्रीकरणम् (Signal Visualization)')
+        ax.set_xlabel('कालः (s)')
+        ax.set_ylabel('आयामः')
         ax.grid(True, alpha=0.3)
 
     fig.tight_layout()
@@ -893,11 +1017,16 @@ def generate_suite_plot(original_filename, operation, original_signal, result_da
 def serve_processed(filename):
     return send_from_directory(app.config['PROCESSED_FOLDER'], filename)
 
-@app.route('/api/download/<output_id>')
-def download_output(output_id):
-    # For now, return a sample processed file
-    # Can be extended to zip multiple outputs
-    return jsonify({"message": "Download feature - ready for extension"})
+@app.route('/api/download/<path:filename>')
+def download_output(filename):
+    clean_filename = os.path.basename(filename)
+    filepath = os.path.join(app.config['PROCESSED_FOLDER'], clean_filename)
+    if os.path.exists(filepath):
+        return send_from_directory(app.config['PROCESSED_FOLDER'], clean_filename, as_attachment=True)
+    upload_path = os.path.join(app.config['UPLOAD_FOLDER'], clean_filename)
+    if os.path.exists(upload_path):
+        return send_from_directory(app.config['UPLOAD_FOLDER'], clean_filename, as_attachment=True)
+    return jsonify({"error": "File not found"}), 404
 
 @app.errorhandler(Exception)
 def handle_exception(e):
